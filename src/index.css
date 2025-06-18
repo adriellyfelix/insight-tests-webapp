@@ -24,10 +24,11 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  /* Motivo do porque o width da box não tava ocupando a tela toda. */
+  /* display: flex; */
+  /* place-items: center; */
+  /* min-width: 320px;
+  min-height: 100vh; */
 }
 
 h1 {
