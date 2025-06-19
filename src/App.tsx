@@ -1,50 +1,62 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
-import { ptBR } from 'date-fns/locale'
-import { AuthProvider, useAuth } from './contexts/AuthContext'
-import Login from './pages/Login'
-import ProjectList from './pages/ProjectList'
+import { Routes, Route, Navigate } from "react-router-dom";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { ptBR } from "date-fns/locale";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import Login from "./pages/Login";
+import ProjectList from "./pages/ProjectList";
 // import ProjectDetails from './pages/ProjectDetails'
-import Dashboard from './pages/Dashboard'
+import Dashboard from "./pages/Dashboard";
 // import TestCaseList from './pages/TestCaseList'
-import TestSuiteList from './pages/TestSuiteList'
-import BugList from './pages/BugList'
+import TestSuiteList from "./pages/TestSuiteList";
+import BugList from "./pages/BugList";
 // import TestExecutionList from './pages/TestExecutionList'
-import Reports from './pages/Reports'
-import Permissions from './pages/Permissions'
-import Settings from './pages/Settings'
-import Home from './pages/Home'
+import Reports from "./pages/Reports";
+import Permissions from "./pages/Permissions";
+import Settings from "./pages/Settings";
+import Home from "./pages/Home";
+import Register from "./pages/Register";
 
 interface PrivateRouteProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 function PrivateRoute({ children }: PrivateRouteProps) {
-  const { user } = useAuth()
-
-  if (!user) {
-    return <Navigate to="/login" />
+  const { user } = useAuth();
+  const isAuth = true;
+  if (!isAuth) {
+    return <Navigate to="/login" />;
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }
 
 function App() {
   return (
-      <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
-        <AuthProvider>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route
-              path="/projetos"
-              element={
-               // <PrivateRoute>
-                  <ProjectList />
-                //</PrivateRoute>
-              }
-            />
-            {/* <Route
+    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/dashboard"
+            element={
+              <Dashboard />
+              // <PrivateRoute>
+              // </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/projetos"
+            element={
+              // <PrivateRoute>
+              <ProjectList />
+              //</PrivateRoute>
+            }
+          />
+          {/* <Route
               path="/projetos/:id"
               element={
                 <PrivateRoute>
@@ -52,15 +64,15 @@ function App() {
                 </PrivateRoute>
               }
             /> */}
-            <Route
-              path="/projetos/:id/dashboard"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
-            {/* <Route
+          <Route
+            path="/projetos/:id/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          {/* <Route
               path="/projetos/:id/casos-de-teste"
               element={
                 <PrivateRoute>
@@ -68,23 +80,23 @@ function App() {
                 </PrivateRoute>
               }
             /> */}
-            <Route
-              path="/projetos/:id/suites-de-teste"
-              element={
-                <PrivateRoute>
-                  <TestSuiteList />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/projetos/:id/bugs"
-              element={
-                <PrivateRoute>
-                  <BugList />
-                </PrivateRoute>
-              }
-            />
-            {/* <Route
+          <Route
+            path="/projetos/:id/suites-de-teste"
+            element={
+              <PrivateRoute>
+                <TestSuiteList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/projetos/:id/bugs"
+            element={
+              <PrivateRoute>
+                <BugList />
+              </PrivateRoute>
+            }
+          />
+          {/* <Route
               path="/projetos/:id/execucoes"
               element={
                 <PrivateRoute>
@@ -92,42 +104,34 @@ function App() {
                 </PrivateRoute>
               }
             /> */}
-            <Route
-              path="/projetos/:id/relatorios"
-              element={
-                <PrivateRoute>
-                  <Reports />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/permissoes"
-              element={
-                <PrivateRoute>
-                  <Permissions />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/configuracoes"
-              element={
-                <PrivateRoute>
-                  <Settings />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/"
-              element={
-                <PrivateRoute>
-                  <Home />
-                </PrivateRoute>
-              }
-            />
-          </Routes>
-        </AuthProvider>
-      </LocalizationProvider>
-  )
+          <Route
+            path="/projetos/:id/relatorios"
+            element={
+              <PrivateRoute>
+                <Reports />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/permissoes"
+            element={
+              <PrivateRoute>
+                <Permissions />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/configuracoes"
+            element={
+              <PrivateRoute>
+                <Settings />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </AuthProvider>
+    </LocalizationProvider>
+  );
 }
 
-export default App
+export default App;
