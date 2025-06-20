@@ -11,9 +11,9 @@ interface User {
 
 interface AuthContextData {
   user: User | null;
+  register: (name: string, email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
-  register: (name: string, email: string, password: string) => void;
 }
 
 interface AuthProviderProps {
@@ -26,64 +26,43 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(() => {
     const storedUser = localStorage.getItem("@Insights:user");
     if (storedUser) {
-      console.log("dados populados", storedUser);
-
       return JSON.parse(storedUser);
     }
-    console.log("Sem dados");
     return null;
   });
 
   const register = async (name: string, email: string, password: string) => {
     try {
       const response = await authApi.register(name, email, password);
+
       const { user: userData } = response.data;
       console.log("dados do user:", userData);
     } catch (error) {
-      console.log("deu erro");
+      console.error("Erro ao registrar:", error);
+      throw new Error("Erro ao registrar");
     }
   };
 
-  // const signIn = useCallback(async (email: string, password: string) => {
-  //   try {
-  //     const response = await authApi.login(email, password);
-  //     const { access_token, user: userData } = await response.data;
-
-  //     //const { token, user: userData } = await mockLogin(email, password);
-  //     await localStorage.setItem("@Insights:token", access_token);
-  //     await localStorage.setItem("@Insights:user", JSON.stringify(userData));
-
-  //     setUser({
-  //       id: userData.id,
-  //       name: userData.nome,
-  //       email: userData.email,
-  //       //avatar: userData.avatar,
-  //     });
-  //     console.log(user);
-  //   } catch (error) {
-  //     throw new Error("Falha na autenticação");
-  //   }
-  // }, []);
-
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
-      const response = await authApi.login(email, password); // Percebi que é essa linha que impede a navegação.
-      console.log("Resposta da API:", response.data);
-
+      const response = await authApi.login(email, password);
       const { access_token, user: userData } = await response.data;
+
       //const { token, user: userData } = await mockLogin(email, password);
       localStorage.setItem("@Insights:token", access_token);
       localStorage.setItem("@Insights:user", JSON.stringify(userData));
+
       setUser({
         id: userData.id,
         name: userData.nome,
         email: userData.email,
         //avatar: userData.avatar,
       });
+      console.log(user);
     } catch (error) {
       throw new Error("Falha na autenticação");
     }
-  };
+  }, []);
 
   const signOut = useCallback(() => {
     localStorage.removeItem("@Insights:token");

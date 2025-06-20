@@ -23,11 +23,9 @@ interface PrivateRouteProps {
 
 function PrivateRoute({ children }: PrivateRouteProps) {
   const { user } = useAuth();
-  const isAuth = true;
-  if (!isAuth) {
+  if (!user) {
     return <Navigate to="/login" />;
   }
-
   return <>{children}</>;
 }
 
@@ -42,9 +40,9 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <Dashboard />
-              // <PrivateRoute>
-              // </PrivateRoute>
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
             }
           />
 

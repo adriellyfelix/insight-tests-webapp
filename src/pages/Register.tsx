@@ -25,7 +25,6 @@ const Register: React.FC = () => {
     setError(null);
     try {
       await register(nome, email, senha);
-
       navigate("/login");
     } catch (err: any) {
       setError(err.message || "Erro ao fazer cadastro");
