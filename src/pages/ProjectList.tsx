@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -21,155 +21,38 @@ import {
   Chip,
 } from "@mui/material";
 import Sidebar from "../components/Sidebar";
-import { projetosApi } from "../services/api";
-import type { Projeto } from "../types";
+import useProject from "../hooks/useProject";
 
 const ProjectList: React.FC = () => {
-  const [projetos, setProjetos] = useState<Projeto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const {
+    handleOpenModal,
+    handleCloseModal,
+    handleCreateProject,
+    handleUpdateProject,
+    handleDeleteProject,
+    loadProjetos,
 
-  const [novoProjeto, setNovoProjeto] = useState({
-    nome: "",
-    descricao: "",
-    status: "ATIVO",
-    versao: "1.0.0",
-  });
+    setNovoProjeto,
+
+    loading,
+    error,
+    creating,
+    openModal,
+    novoProjeto,
+    projetos,
+    editingProjectId,
+  } = useProject();
 
   useEffect(() => {
     loadProjetos();
   }, []);
 
-  const loadProjetos = async () => {
-    try {
-      setLoading(true);
-      const response = await projetosApi.listar();
-      // Ordena os projetos por nome
-      const projetosOrdenados = response.data.sort((a, b) =>
-        a.nome.localeCompare(b.nome)
-      );
-      setProjetos(projetosOrdenados);
-      setError(null);
-    } catch (err) {
-      setError("Erro ao carregar projetos");
-      console.error("Erro ao carregar projetos:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleOpenModal = (project?: Projeto) => {
-    if (project) {
-      setEditingProjectId(project.id);
-      setNovoProjeto({
-        nome: project.nome,
-        descricao: project.descricao,
-        status: project.status,
-        versao: project.versao,
-      });
-    } else {
-      setEditingProjectId(null);
-      setNovoProjeto({
-        nome: "",
-        descricao: "",
-        status: "ATIVO",
-        versao: "1.0.0",
-      });
-    }
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setNovoProjeto({
-      nome: "",
-      descricao: "",
-      status: "ATIVO",
-      versao: "1.0.0",
-    });
-    setError(null);
-  };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNovoProjeto((prev) => ({
+    setNovoProjeto((prev: any) => ({
       ...prev,
       [name]: value,
     }));
-  };
-
-  const handleCreateProject = async () => {
-    try {
-      if (!novoProjeto.nome.trim()) {
-        setError("O nome do projeto é obrigatório");
-        return;
-      }
-
-      setCreating(true);
-      console.log("Dados enviados à API:", novoProjeto);
-      const response = await projetosApi.criar({
-        nome: novoProjeto.nome.trim().toLocaleLowerCase(),
-        descricao: novoProjeto.descricao.trim(),
-        status: novoProjeto.status,
-        versao: novoProjeto.versao.trim(),
-      });
-      if (response.data) {
-        // Adiciona o novo projeto à lista e ordena
-        const novosProjetos = [...projetos, response.data].sort((a, b) =>
-          a.nome.localeCompare(b.nome)
-        );
-        setProjetos(novosProjetos);
-        handleCloseModal();
-        setError(null);
-      }
-    } catch (err) {
-      setError("Erro ao criar projeto. Por favor, tente novamente.");
-      console.error("Erro ao criar projeto:", err);
-    } finally {
-      setCreating(false);
-    }
-  };
-
-  const handleUpdateProject = async () => {
-    try {
-      if (!novoProjeto.nome.trim()) {
-        setError("O nome do projeto é obrigatório");
-        return;
-      }
-      const response = await projetosApi.atualizar(editingProjectId!, {
-        nome: novoProjeto.nome.trim(),
-        descricao: novoProjeto.descricao.trim(),
-        status: novoProjeto.status,
-        versao: novoProjeto.versao.trim(),
-      });
-
-      if (response.data) {
-        setProjetos((prev) =>
-          prev.map((project) =>
-            project.id === editingProjectId ? response.data : project
-          )
-        );
-        handleCloseModal();
-        setError(null);
-      }
-    } catch (error) {
-      setError("Erro ao editar projeto.");
-      console.log("Erro ao editar projeto:", error);
-    }
-  };
-
-  const handleDeleteProject = async (id: string) => {
-    try {
-      const response = await projetosApi.excluir(id);
-      setProjetos((prev) => prev.filter((project) => project.id !== id));
-      console.log("Projeto excluido", response.data);
-    } catch (error) {
-      setError("Erro ao deletar projeto");
-      console.log("Erro ao excluir o projeto", error);
-    }
   };
 
   const getStatusColor = (status: string) => {

@@ -1,5 +1,13 @@
-import React from 'react'
-import { Box, List, ListItem, ListItemIcon, ListItemText, ListItemButton, Typography } from '@mui/material'
+import React from "react";
+import {
+  Box,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListItemButton,
+  Typography,
+} from "@mui/material";
 import {
   Dashboard as DashboardIcon,
   Assignment as AssignmentIcon,
@@ -9,28 +17,56 @@ import {
   Settings as SettingsIcon,
   Logout as LogoutIcon,
   ChevronRight as ChevronRightIcon,
-} from '@mui/icons-material'
-import { Link as RouterLink } from 'react-router-dom'
+} from "@mui/icons-material";
+import { Link as RouterLink } from "react-router-dom";
 
 interface SidebarProps {
-  selected?: string
+  selected?: string;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
   return (
-    <Box sx={{ width: 240, bgcolor: '#fff', borderRight: '1px solid #F0F0F0', p: 2, display: 'flex', flexDirection: 'column', gap: 2, minHeight: '100vh' }}>
+    <Box
+      sx={{
+        width: 240,
+        bgcolor: "#fff",
+        borderRight: "1px solid #F0F0F0",
+        p: 2,
+        display: "flex",
+        flexDirection: "column",
+        gap: 2,
+        minHeight: "100vh",
+      }}
+    >
       <Box sx={{ flex: 1 }}>
         <List>
           <ListItem disablePadding>
-            <ListItemButton component={RouterLink} to="/" selected={selected === 'home'} sx={{ borderRadius: 2, mb: 1, bgcolor: selected === 'home' ? '#E6F0FF' : undefined }}>
+            <ListItemButton
+              component={RouterLink}
+              to="/"
+              selected={selected === "home"}
+              sx={{
+                borderRadius: 2,
+                mb: 1,
+                bgcolor: selected === "home" ? "#E6F0FF" : undefined,
+              }}
+            >
               <ListItemIcon>
-                <DashboardIcon sx={{ color: selected === 'home' ? '#1890FF' : undefined }} />
+                <DashboardIcon
+                  sx={{ color: selected === "home" ? "#1890FF" : undefined }}
+                />
               </ListItemIcon>
-              <ListItemText primary={<Typography fontWeight={600}>Home</Typography>} />
+              <ListItemText
+                primary={<Typography fontWeight={600}>Home</Typography>}
+              />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton component={RouterLink} to="/projetos" sx={{ borderRadius: 2, mb: 1 }}>
+            <ListItemButton
+              component={RouterLink}
+              to="/projetos"
+              sx={{ borderRadius: 2, mb: 1 }}
+            >
               <ListItemIcon>
                 <FolderIcon />
               </ListItemIcon>
@@ -39,7 +75,11 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding sx={{ pl: 4 }}>
-            <ListItemButton component={RouterLink} to="/projetos/1/suites-de-teste" sx={{ borderRadius: 2, mb: 1 }}>
+            <ListItemButton
+              component={RouterLink}
+              to="/projetos/1/suites-de-teste"
+              sx={{ borderRadius: 2, mb: 1 }}
+            >
               <ListItemIcon>
                 <AssignmentIcon />
               </ListItemIcon>
@@ -47,7 +87,11 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding sx={{ pl: 4 }}>
-            <ListItemButton component={RouterLink} to="/projetos/1/casos-de-teste" sx={{ borderRadius: 2, mb: 1 }}>
+            <ListItemButton
+              component={RouterLink}
+              to="/projetos/1/casos-de-teste"
+              sx={{ borderRadius: 2, mb: 1 }}
+            >
               <ListItemIcon>
                 <BarChartIcon />
               </ListItemIcon>
@@ -55,7 +99,11 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton component={RouterLink} to="/projetos/1/relatorios" sx={{ borderRadius: 2, mb: 1 }}>
+            <ListItemButton
+              component={RouterLink}
+              to="/projetos/1/relatorios"
+              sx={{ borderRadius: 2, mb: 1 }}
+            >
               <ListItemIcon>
                 <BarChartIcon />
               </ListItemIcon>
@@ -63,7 +111,11 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton component={RouterLink} to="/projetos/1/dashboard" sx={{ borderRadius: 2, mb: 1 }}>
+            <ListItemButton
+              component={RouterLink}
+              to="/projetos/1/dashboard"
+              sx={{ borderRadius: 2, mb: 1 }}
+            >
               <ListItemIcon>
                 <DashboardIcon />
               </ListItemIcon>
@@ -71,7 +123,11 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton component={RouterLink} to="/permissoes" sx={{ borderRadius: 2, mb: 1 }}>
+            <ListItemButton
+              component={RouterLink}
+              to="/permissoes"
+              sx={{ borderRadius: 2, mb: 1 }}
+            >
               <ListItemIcon>
                 <GroupIcon />
               </ListItemIcon>
@@ -83,7 +139,11 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
       <Box>
         <List>
           <ListItem disablePadding>
-            <ListItemButton component={RouterLink} to="/configuracoes" sx={{ borderRadius: 2 }}>
+            <ListItemButton
+              component={RouterLink}
+              to="/configuracoes"
+              sx={{ borderRadius: 2 }}
+            >
               <ListItemIcon>
                 <SettingsIcon />
               </ListItemIcon>
@@ -91,7 +151,11 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
-            <ListItemButton component={RouterLink} to="/login" sx={{ borderRadius: 2 }}>
+            <ListItemButton
+              component={RouterLink}
+              to="/login"
+              sx={{ borderRadius: 2 }}
+            >
               <ListItemIcon>
                 <LogoutIcon />
               </ListItemIcon>
@@ -101,7 +165,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
         </List>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default Sidebar 
+export default Sidebar;
