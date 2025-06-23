@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -9,7 +9,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  IconButton,
   Button,
   CircularProgress,
   Alert,
@@ -19,117 +18,175 @@ import {
   DialogActions,
   TextField,
   MenuItem,
-  Chip
-} from '@mui/material'
-import Sidebar from '../components/Sidebar'
-import { projetosApi } from '../services/api'
-import type { Projeto } from '../types'
+  Chip,
+} from "@mui/material";
+import Sidebar from "../components/Sidebar";
+import { projetosApi } from "../services/api";
+import type { Projeto } from "../types";
 
 const ProjectList: React.FC = () => {
-  const [projetos, setProjetos] = useState<Projeto[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [openModal, setOpenModal] = useState(false)
-  const [creating, setCreating] = useState(false)
+  const [projetos, setProjetos] = useState<Projeto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+
   const [novoProjeto, setNovoProjeto] = useState({
-    nome: '',
-    descricao: '',
-    status: 'ATIVO',
-    versao: '1.0.0'
-  })
+    nome: "",
+    descricao: "",
+    status: "ATIVO",
+    versao: "1.0.0",
+  });
 
   useEffect(() => {
-    loadProjetos()
-  }, [])
+    loadProjetos();
+  }, []);
 
   const loadProjetos = async () => {
     try {
-      setLoading(true)
-      const response = await projetosApi.listar()
+      setLoading(true);
+      const response = await projetosApi.listar();
       // Ordena os projetos por nome
-      const projetosOrdenados = response.data.sort((a, b) => 
+      const projetosOrdenados = response.data.sort((a, b) =>
         a.nome.localeCompare(b.nome)
-      )
-      setProjetos(projetosOrdenados)
-      setError(null)
+      );
+      setProjetos(projetosOrdenados);
+      setError(null);
     } catch (err) {
-      setError('Erro ao carregar projetos')
-      console.error('Erro ao carregar projetos:', err)
+      setError("Erro ao carregar projetos");
+      console.error("Erro ao carregar projetos:", err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  const handleOpenModal = () => {
-    setOpenModal(true)
-  }
+  const handleOpenModal = (project?: Projeto) => {
+    if (project) {
+      setEditingProjectId(project.id);
+      setNovoProjeto({
+        nome: project.nome,
+        descricao: project.descricao,
+        status: project.status,
+        versao: project.versao,
+      });
+    } else {
+      setEditingProjectId(null);
+      setNovoProjeto({
+        nome: "",
+        descricao: "",
+        status: "ATIVO",
+        versao: "1.0.0",
+      });
+    }
+    setOpenModal(true);
+  };
 
   const handleCloseModal = () => {
-    setOpenModal(false)
+    setOpenModal(false);
     setNovoProjeto({
-      nome: '',
-      descricao: '',
-      status: 'ATIVO',
-      versao: '1.0.0'
-    })
-    setError(null)
-  }
+      nome: "",
+      descricao: "",
+      status: "ATIVO",
+      versao: "1.0.0",
+    });
+    setError(null);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setNovoProjeto(prev => ({
+    const { name, value } = e.target;
+    setNovoProjeto((prev) => ({
       ...prev,
-      [name]: value
-    }))
-  }
+      [name]: value,
+    }));
+  };
 
   const handleCreateProject = async () => {
     try {
       if (!novoProjeto.nome.trim()) {
-        setError('O nome do projeto é obrigatório')
-        return
+        setError("O nome do projeto é obrigatório");
+        return;
       }
 
-      setCreating(true)
+      setCreating(true);
+      console.log("Dados enviados à API:", novoProjeto);
       const response = await projetosApi.criar({
+        nome: novoProjeto.nome.trim().toLocaleLowerCase(),
+        descricao: novoProjeto.descricao.trim(),
+        status: novoProjeto.status,
+        versao: novoProjeto.versao.trim(),
+      });
+      if (response.data) {
+        // Adiciona o novo projeto à lista e ordena
+        const novosProjetos = [...projetos, response.data].sort((a, b) =>
+          a.nome.localeCompare(b.nome)
+        );
+        setProjetos(novosProjetos);
+        handleCloseModal();
+        setError(null);
+      }
+    } catch (err) {
+      setError("Erro ao criar projeto. Por favor, tente novamente.");
+      console.error("Erro ao criar projeto:", err);
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleUpdateProject = async () => {
+    try {
+      if (!novoProjeto.nome.trim()) {
+        setError("O nome do projeto é obrigatório");
+        return;
+      }
+      const response = await projetosApi.atualizar(editingProjectId!, {
         nome: novoProjeto.nome.trim(),
         descricao: novoProjeto.descricao.trim(),
         status: novoProjeto.status,
-        versao: novoProjeto.versao.trim()
-      })
+        versao: novoProjeto.versao.trim(),
+      });
 
       if (response.data) {
-        // Adiciona o novo projeto à lista e ordena
-        const novosProjetos = [...projetos, response.data].sort((a, b) => 
-          a.nome.localeCompare(b.nome)
-        )
-        setProjetos(novosProjetos)
-        handleCloseModal()
-        setError(null)
+        setProjetos((prev) =>
+          prev.map((project) =>
+            project.id === editingProjectId ? response.data : project
+          )
+        );
+        handleCloseModal();
+        setError(null);
       }
-    } catch (err) {
-      setError('Erro ao criar projeto. Por favor, tente novamente.')
-      console.error('Erro ao criar projeto:', err)
-    } finally {
-      setCreating(false)
+    } catch (error) {
+      setError("Erro ao editar projeto.");
+      console.log("Erro ao editar projeto:", error);
     }
-  }
+  };
+
+  const handleDeleteProject = async (id: string) => {
+    try {
+      const response = await projetosApi.excluir(id);
+      setProjetos((prev) => prev.filter((project) => project.id !== id));
+      console.log("Projeto excluido", response.data);
+    } catch (error) {
+      setError("Erro ao deletar projeto");
+      console.log("Erro ao excluir o projeto", error);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'ATIVO':
-        return 'success'
-      case 'INATIVO':
-        return 'error'
-      case 'EM_DESENVOLVIMENTO':
-        return 'warning'
+      case "ATIVO":
+        return "success";
+      case "INATIVO":
+        return "error";
+      case "EM_DESENVOLVIMENTO":
+        return "warning";
       default:
-        return 'default'
+        return "default";
     }
-  }
+  };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#F8FAFB' }}>
+    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#F8FAFB" }}>
       <Sidebar selected="projetos" />
       <Box sx={{ flex: 1, p: 4 }}>
         <Typography variant="h4" fontWeight={700} gutterBottom>
@@ -139,7 +196,7 @@ const ProjectList: React.FC = () => {
           variant="contained"
           color="primary"
           sx={{ mb: 2 }}
-          onClick={handleOpenModal}
+          onClick={() => handleOpenModal()}
         >
           Novo Projeto
         </Button>
@@ -151,7 +208,7 @@ const ProjectList: React.FC = () => {
         )}
 
         {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <CircularProgress />
           </Box>
         ) : (
@@ -179,18 +236,27 @@ const ProjectList: React.FC = () => {
                       <TableCell>{project.nome}</TableCell>
                       <TableCell>{project.descricao}</TableCell>
                       <TableCell>
-                        <Chip 
-                          label={project.status} 
+                        <Chip
+                          label={project.status}
                           color={getStatusColor(project.status) as any}
                           size="small"
                         />
                       </TableCell>
                       <TableCell>{project.versao}</TableCell>
                       <TableCell align="right">
-                        <Button size="small" color="primary" sx={{ mr: 1 }}>
+                        <Button
+                          onClick={() => handleOpenModal(project)}
+                          size="small"
+                          color="primary"
+                          sx={{ mr: 1 }}
+                        >
                           Editar
                         </Button>
-                        <Button size="small" color="error">
+                        <Button
+                          onClick={() => handleDeleteProject(project.id)}
+                          size="small"
+                          color="error"
+                        >
                           Excluir
                         </Button>
                       </TableCell>
@@ -202,10 +268,17 @@ const ProjectList: React.FC = () => {
           </TableContainer>
         )}
 
-        <Dialog open={openModal} onClose={handleCloseModal} maxWidth="sm" fullWidth>
+        <Dialog
+          open={openModal}
+          onClose={handleCloseModal}
+          maxWidth="sm"
+          fullWidth
+        >
           <DialogTitle>Criar Novo Projeto</DialogTitle>
           <DialogContent>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 2 }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}
+            >
               <TextField
                 name="nome"
                 label="Nome do Projeto"
@@ -214,7 +287,11 @@ const ProjectList: React.FC = () => {
                 fullWidth
                 required
                 error={!!error && !novoProjeto.nome.trim()}
-                helperText={error && !novoProjeto.nome.trim() ? 'O nome do projeto é obrigatório' : ''}
+                helperText={
+                  error && !novoProjeto.nome.trim()
+                    ? "O nome do projeto é obrigatório"
+                    : ""
+                }
               />
               <TextField
                 name="descricao"
@@ -235,7 +312,9 @@ const ProjectList: React.FC = () => {
               >
                 <MenuItem value="ATIVO">Ativo</MenuItem>
                 <MenuItem value="INATIVO">Inativo</MenuItem>
-                <MenuItem value="EM_DESENVOLVIMENTO">Em Desenvolvimento</MenuItem>
+                <MenuItem value="EM_DESENVOLVIMENTO">
+                  Em Desenvolvimento
+                </MenuItem>
               </TextField>
               <TextField
                 name="versao"
@@ -250,20 +329,24 @@ const ProjectList: React.FC = () => {
             <Button onClick={handleCloseModal} disabled={creating}>
               Cancelar
             </Button>
-            <Button 
-              onClick={handleCreateProject} 
-              variant="contained" 
+            <Button
+              onClick={
+                editingProjectId ? handleUpdateProject : handleCreateProject
+              }
+              variant="contained"
               color="primary"
               disabled={creating}
-              startIcon={creating ? <CircularProgress size={20} color="inherit" /> : null}
+              startIcon={
+                creating ? <CircularProgress size={20} color="inherit" /> : null
+              }
             >
-              {creating ? 'Criando...' : 'Criar'}
+              {editingProjectId ? "Editar" : "Criar"}
             </Button>
           </DialogActions>
         </Dialog>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default ProjectList 
+export default ProjectList;

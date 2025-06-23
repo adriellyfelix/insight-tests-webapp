@@ -34,7 +34,7 @@ const Register: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", maxWidth: "100%", bgcolor: "#F8F8FC" }}>
+    <Box sx={{ minHeight: "100vh", maxWidth: "100%", bgcolor: "#FFFF" }}>
       {/* Navbar */}
 
       {/* Conteúdo principal */}

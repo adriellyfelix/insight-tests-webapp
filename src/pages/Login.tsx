@@ -37,12 +37,12 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", maxWidth: "100%", bgcolor: "#F8F8FC" }}>
+    <Box sx={{ minHeight: "100vh", maxWidth: "100%", bgcolor: "#FFFF" }}>
       {/* Navbar */}
       <AppBar
         position="static"
         elevation={0}
-        sx={{ bgcolor: "#F6F6FB", color: "#3B3472", boxShadow: "none", py: 2 }}
+        sx={{ bgcolor: "#FFFF", color: "#3B3472", boxShadow: "none", py: 2 }}
       >
         <Toolbar sx={{ justifyContent: "flex-start", gap: 6 }}>
           <Link

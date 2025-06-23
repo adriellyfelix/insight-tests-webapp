@@ -43,7 +43,7 @@ export const projetosApi = {
   listar: () => api.get<Projeto[]>("/projetos"),
   obter: (id: string) => api.get<Projeto>(`/projetos/${id}`),
   criar: (projeto: Omit<Projeto, "id">) =>
-    api.post<Projeto>("/projetos", projeto),
+    api.post<Projeto>("/projetos/createProject", projeto),
   atualizar: (id: string, projeto: Partial<Projeto>) =>
     api.put<Projeto>(`/projetos/${id}`, projeto),
   excluir: (id: string) => api.delete(`/projetos/${id}`),
