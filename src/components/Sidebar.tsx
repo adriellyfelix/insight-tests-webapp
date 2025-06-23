@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   List,
@@ -7,6 +7,7 @@ import {
   ListItemText,
   ListItemButton,
   Typography,
+  Collapse,
 } from "@mui/material";
 import {
   Dashboard as DashboardIcon,
@@ -17,14 +18,21 @@ import {
   Settings as SettingsIcon,
   Logout as LogoutIcon,
   ChevronRight as ChevronRightIcon,
+  ExpandLess as ExpandLessIcon,
+  ExpandMore as ExpandMoreIcon,
 } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
+import useProject from "../hooks/useProject";
 
 interface SidebarProps {
   selected?: string;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
+  const { projetos } = useProject();
+  const [showProjects, setShowProjects] = useState(false);
+
+  const toggleProjects = () => setShowProjects(!showProjects);
   return (
     <Box
       sx={{
@@ -63,6 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
           </ListItem>
           <ListItem disablePadding>
             <ListItemButton
+              onClick={toggleProjects}
               component={RouterLink}
               to="/projetos"
               sx={{ borderRadius: 2, mb: 1 }}
@@ -72,9 +81,29 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
               </ListItemIcon>
               <ListItemText primary="Projetos" />
               <ChevronRightIcon fontSize="small" />
+              {showProjects ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </ListItemButton>
           </ListItem>
-          <ListItem disablePadding sx={{ pl: 4 }}>
+
+          {/* names project */}
+          <Collapse in={showProjects} timeout="auto" unmountOnExit>
+            {projetos.map((project: any) => (
+              <ListItem key={project.id} disablePadding sx={{ pl: 4 }}>
+                <ListItemButton
+                  component={RouterLink}
+                  to={`/projetos/${project.id}/suites-de-teste`}
+                  sx={{ borderRadius: 2, mb: 1 }}
+                >
+                  <ListItemIcon>
+                    <AssignmentIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={project.nome} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </Collapse>
+
+          {/* <ListItem disablePadding sx={{ pl: 4 }}>
             <ListItemButton
               component={RouterLink}
               to="/projetos/1/suites-de-teste"
@@ -97,7 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
               </ListItemIcon>
               <ListItemText primary="Casos de Teste" />
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
           <ListItem disablePadding>
             <ListItemButton
               component={RouterLink}

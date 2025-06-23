@@ -5,9 +5,9 @@ import { ptBR } from "date-fns/locale";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Login from "./pages/Login";
 import ProjectList from "./pages/ProjectList";
-// import ProjectDetails from './pages/ProjectDetails'
+//import ProjectDetails from "./pages/ProjectDetails";
 import Dashboard from "./pages/Dashboard";
-// import TestCaseList from './pages/TestCaseList'
+import TestCaseList from "./pages/TestCaseList";
 import TestSuiteList from "./pages/TestSuiteList";
 import BugList from "./pages/BugList";
 // import TestExecutionList from './pages/TestExecutionList'
@@ -50,9 +50,9 @@ function App() {
             <Route
               path="/projetos"
               element={
-                // <PrivateRoute>
-                <ProjectList />
-                //</PrivateRoute>
+                <PrivateRoute>
+                  <ProjectList />
+                </PrivateRoute>
               }
             />
             {/* <Route
@@ -71,19 +71,19 @@ function App() {
                 </PrivateRoute>
               }
             />
-            {/* <Route
-              path="/projetos/:id/casos-de-teste"
-              element={
-                <PrivateRoute>
-                  <TestCaseList />
-                </PrivateRoute>
-              }
-            /> */}
             <Route
               path="/projetos/:id/suites-de-teste"
               element={
                 <PrivateRoute>
                   <TestSuiteList />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/projetos/:id/casos-de-teste"
+              element={
+                <PrivateRoute>
+                  <TestCaseList />
                 </PrivateRoute>
               }
             />

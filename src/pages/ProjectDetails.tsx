@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -12,25 +12,25 @@ import {
   Button,
   CircularProgress,
   Container,
-} from '@mui/material'
+} from "@mui/material";
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Assessment as AssessmentIcon,
-} from '@mui/icons-material'
-import { api } from '../services/api'
-import type { Projeto } from '../types'
-import ProjectForm from '../components/forms/ProjectForm'
-import ReportGenerator from '../components/ReportGenerator'
+} from "@mui/icons-material";
+import { api } from "../services/api";
+import type { Projeto } from "../types";
+import ProjectForm from "../components/forms/ProjectForm";
+import ReportGenerator from "../components/ReportGenerator";
 
 interface TabPanelProps {
-  children?: React.ReactNode
-  index: number
-  value: number
+  children?: React.ReactNode;
+  index: number;
+  value: number;
 }
 
 function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props
+  const { children, value, index, ...other } = props;
 
   return (
     <div
@@ -42,64 +42,69 @@ function TabPanel(props: TabPanelProps) {
     >
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
-  )
+  );
 }
 
 const ProjectDetails = () => {
-  const { projetoId } = useParams<{ projetoId: string }>()
-  const navigate = useNavigate()
-  const [projeto, setProjeto] = useState<Projeto | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [openEditForm, setOpenEditForm] = useState(false)
-  const [openReportGenerator, setOpenReportGenerator] = useState(false)
-  const [tabValue, setTabValue] = useState(0)
+  const { projetoId } = useParams<{ projetoId: string }>();
+  const navigate = useNavigate();
+  const [projeto, setProjeto] = useState<Projeto | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [openEditForm, setOpenEditForm] = useState(false);
+  const [openReportGenerator, setOpenReportGenerator] = useState(false);
+  const [tabValue, setTabValue] = useState(0);
 
   useEffect(() => {
     const fetchProjeto = async () => {
-      if (!projetoId) return
+      if (!projetoId) return;
 
       try {
-        const response = await api.get(`/projetos/${projetoId}`)
-        setProjeto(response.data)
+        const response = await api.get(`/projetos/${projetoId}`);
+        setProjeto(response.data);
       } catch (error) {
-        console.error('Erro ao carregar projeto:', error)
+        console.error("Erro ao carregar projeto:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchProjeto()
-  }, [projetoId])
+    fetchProjeto();
+  }, [projetoId]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue)
-  }
+    setTabValue(newValue);
+  };
 
-  const handleEdit = (projetoEditado: Omit<Projeto, 'id'>) => {
+  const handleEdit = (projetoEditado: Omit<Projeto, "id">) => {
     // Implementar edição do projeto
-    console.log('Editar projeto:', projetoEditado)
-    setOpenEditForm(false)
-  }
+    console.log("Editar projeto:", projetoEditado);
+    setOpenEditForm(false);
+  };
 
   const handleDelete = async () => {
-    if (!projetoId) return
+    if (!projetoId) return;
 
-    if (window.confirm('Tem certeza que deseja excluir este projeto?')) {
+    if (window.confirm("Tem certeza que deseja excluir este projeto?")) {
       try {
-        await api.delete(`/projetos/${projetoId}`)
-        navigate('/')
+        await api.delete(`/projetos/${projetoId}`);
+        navigate("/");
       } catch (error) {
-        console.error('Erro ao excluir projeto:', error)
+        console.error("Erro ao excluir projeto:", error);
       }
     }
-  }
+  };
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="80vh"
+      >
         <CircularProgress />
       </Box>
-    )
+    );
   }
 
   if (!projeto) {
@@ -109,15 +114,18 @@ const ProjectDetails = () => {
           Projeto não encontrado
         </Typography>
       </Container>
-    )
+    );
   }
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-        <Typography variant="h4">
-          {projeto.nome}
-        </Typography>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={3}
+      >
+        <Typography variant="h4">{projeto.nome}</Typography>
         <Box display="flex" gap={1}>
           <Button
             variant="contained"
@@ -158,23 +166,17 @@ const ProjectDetails = () => {
         <Typography variant="h6" gutterBottom>
           Descrição
         </Typography>
-        <Typography paragraph>
-          {projeto.descricao}
-        </Typography>
+        <Typography paragraph>{projeto.descricao}</Typography>
 
         <Typography variant="h6" gutterBottom>
           Status
         </Typography>
-        <Typography paragraph>
-          {projeto.status}
-        </Typography>
+        <Typography paragraph>{projeto.status}</Typography>
 
         <Typography variant="h6" gutterBottom>
           Versão
         </Typography>
-        <Typography paragraph>
-          {projeto.versao}
-        </Typography>
+        <Typography paragraph>{projeto.versao}</Typography>
       </Paper>
 
       <ProjectForm
@@ -190,7 +192,7 @@ const ProjectDetails = () => {
         projetoId={Number(projetoId)}
       />
 
-      <Paper sx={{ width: '100%', mb: 2 }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
@@ -212,9 +214,15 @@ const ProjectDetails = () => {
                   <Typography variant="h6" gutterBottom>
                     Informações do Projeto
                   </Typography>
-                  <Typography><strong>Descrição:</strong> {projeto.descricao}</Typography>
-                  <Typography><strong>Status:</strong> {projeto.status}</Typography>
-                  <Typography><strong>Versão:</strong> {projeto.versao}</Typography>
+                  <Typography>
+                    <strong>Descrição:</strong> {projeto.descricao}
+                  </Typography>
+                  <Typography>
+                    <strong>Status:</strong> {projeto.status}
+                  </Typography>
+                  <Typography>
+                    <strong>Versão:</strong> {projeto.versao}
+                  </Typography>
                 </CardContent>
               </Card>
             </Grid>
@@ -252,7 +260,7 @@ const ProjectDetails = () => {
         </TabPanel>
       </Paper>
     </Container>
-  )
-}
+  );
+};
 
-export default ProjectDetails 
+export default ProjectDetails;
