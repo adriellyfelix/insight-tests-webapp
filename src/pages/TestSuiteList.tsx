@@ -40,7 +40,9 @@ const TestSuiteList: React.FC = () => {
     setVersion,
     setDescription,
     handleCreateSuite,
+    handleDeleteSuite,
   } = useSuite();
+
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#F8FAFB" }}>
       <Sidebar selected="suites" />
@@ -74,16 +76,20 @@ const TestSuiteList: React.FC = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                suitList?.map((project) => (
-                  <TableRow key={project.id}>
-                    <TableCell>{project.nome}</TableCell>
-                    <TableCell>{project.descricao}</TableCell>
-                    <TableCell>{project.versao}</TableCell>
+                suitList?.map((suite) => (
+                  <TableRow key={suite.id}>
+                    <TableCell>{suite.nome}</TableCell>
+                    <TableCell>{suite.descricao}</TableCell>
+                    <TableCell>{suite.versao}</TableCell>
                     <TableCell align="right">
                       <Button size="small" color="primary" sx={{ mr: 1 }}>
                         Editar
                       </Button>
-                      <Button size="small" color="error">
+                      <Button
+                        size="small"
+                        color="error"
+                        onClick={() => handleDeleteSuite(suite.id)}
+                      >
                         Excluir
                       </Button>
                     </TableCell>

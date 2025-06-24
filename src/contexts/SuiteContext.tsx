@@ -20,6 +20,7 @@ interface SuiteContextData {
   handleClosedModal: () => void;
   handleCreateSuite: (id: string | undefined) => void;
   loadDataSuite: (id: string | undefined) => void;
+  handleDeleteSuite: (id: string) => void;
 }
 
 interface SuiteProps {
@@ -75,12 +76,21 @@ export default function SuiteProvider({ children }: SuiteProps) {
       setVersion("");
       setDescription("");
       setType("");
-      console.log("Suite criada", response.data);
     } catch (err) {
       console.error("Erro ao listar suites", err);
     }
   };
 
+  const handleDeleteSuite = async (id: string) => {
+    try {
+      await suitesDeTesteApi.excluir(id);
+      setSuitList((prevSuitList) =>
+        prevSuitList?.filter((suite) => suite.id !== id)
+      );
+    } catch (error) {
+      console.error("Erro ao excluir suite");
+    }
+  };
   return (
     <SuiteContext.Provider
       value={{
@@ -100,6 +110,7 @@ export default function SuiteProvider({ children }: SuiteProps) {
         handleClosedModal,
         handleCreateSuite,
         loadDataSuite,
+        handleDeleteSuite,
       }}
     >
       {children}
