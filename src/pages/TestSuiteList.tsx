@@ -24,7 +24,6 @@ import { useParams } from "react-router-dom";
 
 const TestSuiteList: React.FC = () => {
   const { id } = useParams();
-
   useEffect(() => {
     loadDataSuite(id);
   }, []);
@@ -41,6 +40,8 @@ const TestSuiteList: React.FC = () => {
     setDescription,
     handleCreateSuite,
     handleDeleteSuite,
+    handleUpdateSuite,
+    editSuite,
   } = useSuite();
 
   return (
@@ -51,7 +52,7 @@ const TestSuiteList: React.FC = () => {
           Suites de Teste
         </Typography>
         <Button
-          onClick={handleOpenModal}
+          onClick={() => handleOpenModal(true)}
           variant="contained"
           color="primary"
           sx={{ mb: 2 }}
@@ -82,7 +83,12 @@ const TestSuiteList: React.FC = () => {
                     <TableCell>{suite.descricao}</TableCell>
                     <TableCell>{suite.versao}</TableCell>
                     <TableCell align="right">
-                      <Button size="small" color="primary" sx={{ mr: 1 }}>
+                      <Button
+                        size="small"
+                        color="primary"
+                        sx={{ mr: 1 }}
+                        onClick={() => handleOpenModal(false, suite.id)}
+                      >
                         Editar
                       </Button>
                       <Button
@@ -144,11 +150,15 @@ const TestSuiteList: React.FC = () => {
         <DialogActions>
           <Button onClick={handleClosedModal}>Cancelar</Button>
           <Button
-            onClick={() => handleCreateSuite(id)}
+            onClick={
+              editSuite
+                ? () => handleCreateSuite(id)
+                : () => handleUpdateSuite()
+            }
             variant="contained"
             color="primary"
           >
-            Criar
+            {editSuite ? "Criar" : "Editar"}
           </Button>
         </DialogActions>
       </Dialog>
