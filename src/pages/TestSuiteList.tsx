@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -19,69 +19,28 @@ import {
 
 import Sidebar from "../components/Sidebar";
 
-import { suitesDeTesteApi } from "../services/api";
-import type { SuiteDeTeste } from "../types";
+import useSuite from "../hooks/useSuite";
 import { useParams } from "react-router-dom";
 
 const TestSuiteList: React.FC = () => {
-  useEffect(() => {
-    loadDataSuite();
-  }, []);
   const { id } = useParams();
 
-  const [name, setName] = useState<string>("");
-  const [version, setVersion] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [type, setType] = useState<string>("");
+  useEffect(() => {
+    loadDataSuite(id);
+  }, []);
 
-  //Carregar dados do bakcend.
-  const [suitList, setSuitList] = useState<SuiteDeTeste[]>();
-
-  const [openModal, setOpenModal] = useState(false);
-
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
-  const handleClosedModal = () => {
-    setOpenModal(false);
-  };
-
-  const loadDataSuite = async () => {
-    try {
-      const response = await suitesDeTesteApi.listar();
-      const filteredSuites = response.data.filter(
-        (suite: SuiteDeTeste) => suite.projeto_id === id
-      );
-      setSuitList(filteredSuites);
-    } catch (err) {
-      console.error("Erro ao listar suites", err);
-    }
-  };
-
-  const handleCreateSuite = async () => {
-    const payload: any = {
-      nome: name.trim().toLowerCase(),
-      versao: version.trim(),
-      descricao: description.trim(),
-      tipo: type,
-      projeto_id: id,
-      ativa: false,
-    };
-    try {
-      const response = await suitesDeTesteApi.criar(payload);
-      setSuitList((prevSuitList) => [...(prevSuitList || []), response.data]);
-      handleClosedModal();
-      setName("");
-      setVersion("");
-      setDescription("");
-      setType("");
-      console.log("Suite criada", response.data);
-    } catch (err) {
-      console.error("Erro ao listar suites", err);
-    }
-  };
-
+  const {
+    loadDataSuite,
+    handleOpenModal,
+    suitList,
+    openModal,
+    setName,
+    setType,
+    handleClosedModal,
+    setVersion,
+    setDescription,
+    handleCreateSuite,
+  } = useSuite();
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#F8FAFB" }}>
       <Sidebar selected="suites" />
@@ -145,12 +104,6 @@ const TestSuiteList: React.FC = () => {
               onChange={(e) => setName(e.target.value)}
               fullWidth
               required
-              //error={!!error && !novoProjeto.nome.trim()}
-              // helperText={
-              //   error && !novoProjeto.nome.trim()
-              //     ? "O nome do projeto é obrigatório"
-              //     : ""
-              // }
             />
             <TextField
               name="descricao"
@@ -185,7 +138,7 @@ const TestSuiteList: React.FC = () => {
         <DialogActions>
           <Button onClick={handleClosedModal}>Cancelar</Button>
           <Button
-            onClick={handleCreateSuite}
+            onClick={() => handleCreateSuite(id)}
             variant="contained"
             color="primary"
           >

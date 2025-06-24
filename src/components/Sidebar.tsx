@@ -80,7 +80,6 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
                 <FolderIcon />
               </ListItemIcon>
               <ListItemText primary="Projetos" />
-              <ChevronRightIcon fontSize="small" />
               {showProjects ? <ExpandLessIcon /> : <ExpandMoreIcon />}
             </ListItemButton>
           </ListItem>
