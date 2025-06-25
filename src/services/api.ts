@@ -54,7 +54,10 @@ export const casosDeTesteApi = {
   listar: () => api.get<CasoDeTeste[]>("/casos-de-teste"),
   obter: (id: string) => api.get<CasoDeTeste>(`/casos-de-teste/${id}`),
   criar: (casoDeTeste: Omit<CasoDeTeste, "id">) =>
-    api.post<CasoDeTeste>("/casos-de-teste", casoDeTeste),
+    api.post<CasoDeTeste>(
+      `casos-de-teste/suites-de-teste/${casoDeTeste.suite_id}/casos-de-teste`,
+      casoDeTeste
+    ),
   atualizar: (id: string, casoDeTeste: Partial<CasoDeTeste>) =>
     api.put<CasoDeTeste>(`/casos-de-teste/${id}`, casoDeTeste),
   excluir: (id: string) => api.delete(`/casos-de-teste/${id}`),

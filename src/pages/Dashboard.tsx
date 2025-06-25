@@ -40,7 +40,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import Sidebar from "../components/Sidebar";
-console.log("xedoooo");
+
 const metricCards = [
   {
     label: "Total de testes",

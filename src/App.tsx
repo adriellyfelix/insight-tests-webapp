@@ -83,7 +83,7 @@ function App() {
                 }
               />
               <Route
-                path="/projetos/:id/casos-de-teste"
+                path="/projetos/:suiteId/casos-de-teste"
                 element={
                   <PrivateRoute>
                     <TestCaseList />

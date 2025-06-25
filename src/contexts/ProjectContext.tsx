@@ -15,6 +15,8 @@ interface ProjectContextData {
   editingProjectId: string | null;
   setEditingProjectId: React.Dispatch<React.SetStateAction<string | null>>;
   novoProjeto: any;
+  projectId: string | undefined;
+  setProjectId: React.Dispatch<React.SetStateAction<string | undefined>>;
   setNovoProjeto: React.Dispatch<React.SetStateAction<any>>;
   handleOpenModal: (project?: Projeto) => void;
   handleCloseModal: () => void;
@@ -34,6 +36,7 @@ export const ProjectContext = createContext<ProjectContextData>(
 
 export default function ProjectProvider({ children }: ProjectProviderProps) {
   const [projetos, setProjetos] = useState<Projeto[]>([]);
+  const [projectId, setProjectId] = useState<string | undefined>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openModal, setOpenModal] = useState(false);
@@ -176,6 +179,8 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
         error,
         openModal,
         editingProjectId,
+        projectId,
+        setProjectId,
         setLoading,
         setCreating,
         setEditingProjectId,

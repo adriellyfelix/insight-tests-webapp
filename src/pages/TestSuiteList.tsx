@@ -24,6 +24,8 @@ import { useParams } from "react-router-dom";
 
 const TestSuiteList: React.FC = () => {
   const { id } = useParams();
+
+  localStorage.setItem("projectId", id || "");
   useEffect(() => {
     loadDataSuite(id);
   }, []);
@@ -66,6 +68,7 @@ const TestSuiteList: React.FC = () => {
                 <TableCell>Nome da suite</TableCell>
                 <TableCell>Descrição</TableCell>
                 <TableCell>Versão</TableCell>
+                <TableCell>Caso de teste</TableCell>
                 <TableCell align="right">Ações</TableCell>
               </TableRow>
             </TableHead>
@@ -82,6 +85,11 @@ const TestSuiteList: React.FC = () => {
                     <TableCell>{suite.nome}</TableCell>
                     <TableCell>{suite.descricao}</TableCell>
                     <TableCell>{suite.versao}</TableCell>
+                    <TableCell>
+                      <a href={`/projetos/${suite.id}/casos-de-teste`}>
+                        Ir para caso de teste
+                      </a>
+                    </TableCell>
                     <TableCell align="right">
                       <Button
                         size="small"
