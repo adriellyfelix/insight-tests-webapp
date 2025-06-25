@@ -18,6 +18,7 @@ import Home from "./pages/Home";
 import Register from "./pages/Register";
 import ProjectProvider from "./contexts/ProjectContext";
 import SuiteProvider from "./contexts/SuiteContext";
+import TestCaseProvider from "./contexts/TestCaseContext";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -37,28 +38,29 @@ function App() {
       <AuthProvider>
         <ProjectProvider>
           <SuiteProvider>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/" element={<Home />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <PrivateRoute>
-                    <Dashboard />
-                  </PrivateRoute>
-                }
-              />
+            <TestCaseProvider>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/" element={<Home />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  }
+                />
 
-              <Route
-                path="/projetos"
-                element={
-                  <PrivateRoute>
-                    <ProjectList />
-                  </PrivateRoute>
-                }
-              />
-              {/* <Route
+                <Route
+                  path="/projetos"
+                  element={
+                    <PrivateRoute>
+                      <ProjectList />
+                    </PrivateRoute>
+                  }
+                />
+                {/* <Route
               path="/projetos/:id"
               element={
                 <PrivateRoute>
@@ -66,39 +68,39 @@ function App() {
                 </PrivateRoute>
               }
             /> */}
-              <Route
-                path="/projetos/:id/dashboard"
-                element={
-                  <PrivateRoute>
-                    <Dashboard />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/projetos/:id/suites-de-teste"
-                element={
-                  <PrivateRoute>
-                    <TestSuiteList />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/projetos/:suiteId/casos-de-teste"
-                element={
-                  <PrivateRoute>
-                    <TestCaseList />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/projetos/:id/bugs"
-                element={
-                  <PrivateRoute>
-                    <BugList />
-                  </PrivateRoute>
-                }
-              />
-              {/* <Route
+                <Route
+                  path="/projetos/:id/dashboard"
+                  element={
+                    <PrivateRoute>
+                      <Dashboard />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/projetos/:id/suites-de-teste"
+                  element={
+                    <PrivateRoute>
+                      <TestSuiteList />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/projetos/:suiteId/casos-de-teste"
+                  element={
+                    <PrivateRoute>
+                      <TestCaseList />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/projetos/:id/bugs"
+                  element={
+                    <PrivateRoute>
+                      <BugList />
+                    </PrivateRoute>
+                  }
+                />
+                {/* <Route
               path="/projetos/:id/execucoes"
               element={
                 <PrivateRoute>
@@ -106,31 +108,32 @@ function App() {
                 </PrivateRoute>
               }
             /> */}
-              <Route
-                path="/projetos/:id/relatorios"
-                element={
-                  <PrivateRoute>
-                    <Reports />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/permissoes"
-                element={
-                  <PrivateRoute>
-                    <Permissions />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/configuracoes"
-                element={
-                  <PrivateRoute>
-                    <Settings />
-                  </PrivateRoute>
-                }
-              />
-            </Routes>
+                <Route
+                  path="/projetos/:id/relatorios"
+                  element={
+                    <PrivateRoute>
+                      <Reports />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/permissoes"
+                  element={
+                    <PrivateRoute>
+                      <Permissions />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/configuracoes"
+                  element={
+                    <PrivateRoute>
+                      <Settings />
+                    </PrivateRoute>
+                  }
+                />
+              </Routes>
+            </TestCaseProvider>
           </SuiteProvider>
         </ProjectProvider>
       </AuthProvider>

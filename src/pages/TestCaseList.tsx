@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Typography,
@@ -10,7 +10,6 @@ import {
   TableHead,
   TableRow,
   IconButton,
-  Chip,
   CircularProgress,
   Alert,
   Button,
@@ -21,117 +20,37 @@ import {
   TextField,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
-
-import { casosDeTesteApi } from "../services/api";
-import type { CasoDeTeste } from "../types";
 import { useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-
+import useCaseTest from "../hooks/useCaseTest";
 const TestCaseList: React.FC = () => {
-  const [casosDeTeste, setCasosDeTeste] = useState<CasoDeTeste[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [openModal, setOpenModal] = useState(false);
-  const [name, setName] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [steps, setSteps] = useState<string[]>([]);
-  const [expectedResult, setExpectedResult] = useState<string>("");
-  const [selectedTestCase, setSelectedTestCase] = useState<string | undefined>(
-    ""
-  );
-  const [editTest, setEditTest] = useState(false);
+  const {
+    openModal,
+    selectedTestCase,
+    loading,
+    editTest,
+    error,
+    casosDeTeste,
+    setName,
+    setDescription,
+    setSteps,
+    setExpectedResult,
+    loadCasosDeTeste,
+    handleOpenModalCreate,
+    handleClosedModal,
+    handleCreate,
+    handleOpenModalEdit,
+    handleDelete,
+    handleEdit,
+  } = useCaseTest();
+
   const { suiteId } = useParams();
 
   const projectId = localStorage.getItem("projectId");
 
   useEffect(() => {
-    loadCasosDeTeste();
+    loadCasosDeTeste(suiteId);
   }, []);
-
-  const handleOpenModalEdit = (idCasoDeTeste?: string) => {
-    setEditTest(false);
-    setOpenModal(true);
-    setSelectedTestCase(idCasoDeTeste);
-  };
-
-  const handleOpenModalCreate = () => {
-    setEditTest(true);
-    setOpenModal(true);
-  };
-
-  const handleClosedModal = () => {
-    setOpenModal(false);
-  };
-
-  const loadCasosDeTeste = async () => {
-    try {
-      setLoading(true);
-      const response = await casosDeTesteApi.listar();
-      const filteredCasosDeTeste = response.data.filter(
-        (teste: any) => teste.suite_id === suiteId
-      );
-      setCasosDeTeste(filteredCasosDeTeste);
-      setError(null);
-    } catch (err) {
-      setError("Erro ao carregar casos de teste");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCreate = async () => {
-    try {
-      const payload: any = {
-        titulo: name.trim(),
-        descricao: description.trim(),
-        passos: steps,
-        resultadoEsperado: expectedResult.trim(),
-        projeto_id: projectId,
-        suite_id: suiteId,
-      };
-      const response = await casosDeTesteApi.criar(payload);
-      setCasosDeTeste((prevCasos) => [...prevCasos, response.data]);
-      console.log("Caso de teste criado");
-      setOpenModal(false);
-    } catch (error) {
-      console.log("Erro ao criar caso de teste", error);
-    }
-  };
-
-  const handleEdit = async (id: string) => {
-    setOpenModal(true);
-    try {
-      const payload: Partial<CasoDeTeste> = {
-        titulo: name.trim(),
-        descricao: description.trim(),
-        passos: steps,
-        resultadoEsperado: expectedResult.trim(),
-      };
-      const response = await casosDeTesteApi.atualizar(id, payload);
-      setCasosDeTeste((prevCasos) =>
-        prevCasos.map((caso) =>
-          caso.id === id ? { ...caso, ...response.data } : caso
-        )
-      );
-      console.log("dados atualizados");
-    } catch (error) {
-      console.error("erro ao atualizar caso de teste", error);
-    }
-    setOpenModal(false);
-  };
-
-  const handleDelete = async (id: string) => {
-    if (window.confirm("Tem certeza que deseja excluir este caso de teste?")) {
-      try {
-        await casosDeTesteApi.excluir(id);
-        setCasosDeTeste(casosDeTeste.filter((caso) => caso.id !== id));
-      } catch (err) {
-        setError("Erro ao excluir caso de teste");
-        console.error(err);
-      }
-    }
-  };
 
   if (loading) {
     return (
@@ -281,7 +200,7 @@ const TestCaseList: React.FC = () => {
           <Button
             onClick={
               editTest
-                ? () => handleCreate()
+                ? () => handleCreate(projectId!, suiteId!)
                 : // @ts-ignore
                   () => handleEdit(selectedTestCase)
             }
