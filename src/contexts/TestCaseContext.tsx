@@ -1,6 +1,7 @@
 import { createContext, useState } from "react";
 import type { CasoDeTeste } from "../types";
-import { casosDeTesteApi } from "../services/api";
+import { casosDeTesteApi, execucoesApi } from "../services/api";
+import type { ExecucaoDeTeste } from "../types";
 
 interface TestCaseContextData {
   loading: boolean;
@@ -33,6 +34,15 @@ interface TestCaseContextData {
   casosDeTeste: CasoDeTeste[];
   setCasosDeTeste: React.Dispatch<React.SetStateAction<CasoDeTeste[]>>;
 
+  idCasoDeTeste: string;
+  setIdCasoDeTeste: React.Dispatch<React.SetStateAction<string>>;
+
+  testStarted: any;
+  setTestStarted: React.Dispatch<React.SetStateAction<any>>;
+
+  testStatus: any;
+  setTestStatus: React.Dispatch<React.SetStateAction<any>>;
+
   handleOpenModalEdit: (idCasoDeTeste?: string) => void;
   handleOpenModalCreate: () => void;
   handleClosedModal: () => void;
@@ -40,6 +50,7 @@ interface TestCaseContextData {
   handleCreate: (projectId: string, suiteId: string) => void;
   handleEdit: (id: string) => void;
   handleDelete: (id: string) => void;
+  runTestCase: (caso_id: string, suite_id: string) => void;
 }
 
 interface TestCaseContextProps {
@@ -63,10 +74,16 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
   const [selectedTestCase, setSelectedTestCase] = useState<string | undefined>(
     ""
   );
-  const handleOpenModalEdit = (idCasoDeTeste?: string) => {
+  const [idCasoDeTeste, setIdCasoDeTeste] = useState("");
+  const [testStarted, setTestStarted] = useState<Map<string, boolean>>(
+    new Map()
+  );
+  const [testStatus, setTestStatus] = useState<any>();
+
+  const handleOpenModalEdit = (idCasoDeTesteEdit?: string) => {
     setEditTest(false);
     setOpenModal(true);
-    setSelectedTestCase(idCasoDeTeste);
+    setSelectedTestCase(idCasoDeTesteEdit);
   };
   const handleOpenModalCreate = () => {
     setEditTest(true);
@@ -104,6 +121,7 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
       };
       const response = await casosDeTesteApi.criar(payload);
       setCasosDeTeste((prevCasos) => [...prevCasos, response.data]);
+      localStorage.setItem("casoDeTesteId", response.data.id);
       console.log("Caso de teste criado");
       setOpenModal(false);
     } catch (error) {
@@ -143,6 +161,28 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
       }
     }
   };
+
+  const runTestCase = async (caso_id: string, suite_id: string) => {
+    try {
+      const payload: ExecucaoDeTeste = {
+        status: "falhou",
+        caso_id,
+        suite_id,
+      };
+      const response = await execucoesApi.criar(payload);
+      setTestStarted((prevMap) => {
+        const newMap = new Map(prevMap);
+        newMap.set(caso_id, true);
+        return newMap;
+      });
+
+      setTestStatus(response.data.status);
+
+      console.log("Execução de teste criada.");
+    } catch (error) {
+      console.error("Erro ao executar caso de teste");
+    }
+  };
   return (
     <TestCaseContext.Provider
       value={{
@@ -156,6 +196,10 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
         selectedTestCase,
         editTest,
         casosDeTeste,
+        idCasoDeTeste,
+        testStarted,
+        testStatus,
+        setTestStarted,
         setCasosDeTeste,
         setName,
         setDescription,
@@ -166,6 +210,7 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
         setExpectedResult,
         setSelectedTestCase,
         setEditTest,
+        setIdCasoDeTeste,
         loadCasosDeTeste,
         handleClosedModal,
         handleCreate,
@@ -173,6 +218,8 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
         handleEdit,
         handleOpenModalCreate,
         handleOpenModalEdit,
+        runTestCase,
+        setTestStatus,
       }}
     >
       {children};

@@ -89,7 +89,7 @@ export const execucoesApi = {
   listar: () => api.get<ExecucaoDeTeste[]>("/execucoes-de-teste"),
   obter: (id: string) => api.get<ExecucaoDeTeste>(`/execucoes-de-teste/${id}`),
   criar: (execucao: Omit<ExecucaoDeTeste, "id">) =>
-    api.post<ExecucaoDeTeste>("/execucoes-de-teste", execucao),
+    api.post<ExecucaoDeTeste>("/execucoes-de-teste/create", execucao),
   atualizar: (id: string, execucao: Partial<ExecucaoDeTeste>) =>
     api.put<ExecucaoDeTeste>(`/execucoes-de-teste/${id}`, execucao),
   excluir: (id: string) => api.delete(`/execucoes-de-teste/${id}`),

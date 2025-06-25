@@ -19,6 +19,7 @@ import Register from "./pages/Register";
 import ProjectProvider from "./contexts/ProjectContext";
 import SuiteProvider from "./contexts/SuiteContext";
 import TestCaseProvider from "./contexts/TestCaseContext";
+import TestResult from "./pages/TestResult";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -89,6 +90,14 @@ function App() {
                   element={
                     <PrivateRoute>
                       <TestCaseList />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/testresult/:testId"
+                  element={
+                    <PrivateRoute>
+                      <TestResult />
                     </PrivateRoute>
                   }
                 />

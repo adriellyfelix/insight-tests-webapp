@@ -48,7 +48,7 @@ export interface Bug {
 }
 
 export interface ExecucaoDeTeste {
-  id: string;
+  id?: string;
   caso_id: string;
   suite_id: string;
   status: "passou" | "falhou" | "bloqueado";

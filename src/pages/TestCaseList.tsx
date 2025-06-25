@@ -42,12 +42,15 @@ const TestCaseList: React.FC = () => {
     handleOpenModalEdit,
     handleDelete,
     handleEdit,
+    runTestCase,
+    testStarted,
+    testStatus,
   } = useCaseTest();
 
   const { suiteId } = useParams();
 
   const projectId = localStorage.getItem("projectId");
-
+  const casoDeTesteId = localStorage.getItem("casoDeTesteId");
   useEffect(() => {
     loadCasosDeTeste(suiteId);
   }, []);
@@ -72,7 +75,6 @@ const TestCaseList: React.FC = () => {
       </Box>
     );
   }
-
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#F8FAFB" }}>
       <Sidebar selected="caso-de-teste" />
@@ -96,6 +98,9 @@ const TestCaseList: React.FC = () => {
                 <TableCell>Descrição</TableCell>
                 <TableCell>Passos</TableCell>
                 <TableCell>Resultado esperado</TableCell>
+                <TableCell>Executar teste</TableCell>
+                <TableCell>Visualizar resultado</TableCell>
+                {testStatus === "falhou" && <TableCell>Anexo</TableCell>}
                 <TableCell>Ações</TableCell>
               </TableRow>
             </TableHead>
@@ -115,6 +120,48 @@ const TestCaseList: React.FC = () => {
                     </ul>
                   </TableCell>
                   <TableCell>{caso.resultadoEsperado}</TableCell>
+                  <TableCell>
+                    <Button
+                      onClick={() => runTestCase(caso.id, suiteId!)}
+                      variant="contained"
+                      component="label"
+                      color="primary"
+                    >
+                      Executar
+                      {/* <input
+                        type="file"
+                        hidden
+                        // onChange={(e) =>
+                        //   handleFileUpload(caso.id, e.target.files)
+                        // }
+                      /> */}
+                    </Button>
+                  </TableCell>
+                  <TableCell>
+                    {testStarted.get(caso.id) ? (
+                      <a href={`/testresult/${casoDeTesteId}`}>Visualizar</a>
+                    ) : (
+                      <span>Resultado ainda não gerado</span>
+                    )}
+                  </TableCell>
+                  {testStatus === "falhou" && (
+                    <TableCell>
+                      <Button
+                        variant="contained"
+                        component="label"
+                        color="error"
+                      >
+                        <input
+                          type="file"
+                          hidden
+                          // onChange={(e) =>
+                          //   handleFileUpload(caso.id, e.target.files)
+                          // }
+                        />
+                        Incluir evidência
+                      </Button>
+                    </TableCell>
+                  )}
                   {/* <TableCell>
                     <Chip
                       label={caso.prioridade}
