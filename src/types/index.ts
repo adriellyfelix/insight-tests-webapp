@@ -51,6 +51,7 @@ export interface ExecucaoDeTeste {
   id?: string;
   caso_id: string;
   suite_id: string;
+  arquivado?: boolean;
   status: "passou" | "falhou" | "bloqueado";
   observacao?: string;
   versao?: string;

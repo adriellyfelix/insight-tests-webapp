@@ -165,7 +165,7 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
   const runTestCase = async (caso_id: string, suite_id: string) => {
     try {
       const payload: ExecucaoDeTeste = {
-        status: "falhou",
+        status: "passou",
         caso_id,
         suite_id,
       };

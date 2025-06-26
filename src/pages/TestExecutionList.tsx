@@ -13,6 +13,7 @@ import {
   Chip,
   CircularProgress,
   Alert,
+  Button,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +23,7 @@ import type { ExecucaoDeTeste } from "../types";
 const TestExecutionList: React.FC = () => {
   const [execucoes, setExecucoes] = useState<ExecucaoDeTeste[]>([]);
   const [loading, setLoading] = useState(true);
+  const [arquivado, setArquivado] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -83,11 +85,25 @@ const TestExecutionList: React.FC = () => {
   }
 
   return (
-    <Box>
-      <Typography variant="h4" gutterBottom>
-        Execuções de Teste
-      </Typography>
-
+    <Box sx={{ minHeight: "100vh", padding: 2 }}>
+      <Box sx={{ display: "flex", gap: 10 }}>
+        <Typography variant="h4" gutterBottom>
+          Execuções de Teste
+        </Typography>
+        <Box>
+          <Typography variant="h6" gutterBottom>
+            Resultados arquivados
+          </Typography>
+          <Button
+            onClick={() => setArquivado(!arquivado)}
+            variant="contained"
+            color="primary"
+            sx={{ mb: 2 }}
+          >
+            {arquivado ? "Arquivar" : "Desarquivar"}
+          </Button>
+        </Box>
+      </Box>
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -101,40 +117,44 @@ const TestExecutionList: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {execucoes.map((execucao) => (
-              <TableRow key={execucao.id}>
-                <TableCell>{execucao.caso_id}</TableCell>
-                <TableCell>{execucao.suite_id}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={execucao.status}
-                    color={
-                      execucao.status === "passou"
-                        ? "success"
-                        : execucao.status === "falhou"
-                        ? "error"
-                        : "warning"
-                    }
-                  />
-                </TableCell>
-                <TableCell>{execucao.versao || "-"}</TableCell>
-                <TableCell>{execucao.ambiente || "-"}</TableCell>
-                <TableCell>
-                  <IconButton
-                    onClick={() => handleEdit(execucao.id!)}
-                    color="primary"
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => handleDelete(execucao.id!)}
-                    color="error"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+            {execucoes
+              .filter((execucao) =>
+                arquivado ? execucao.arquivado : !execucao.arquivado
+              )
+              .map((execucao) => (
+                <TableRow key={execucao.id}>
+                  <TableCell>{execucao.caso_id}</TableCell>
+                  <TableCell>{execucao.suite_id}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={execucao.status}
+                      color={
+                        execucao.status === "passou"
+                          ? "success"
+                          : execucao.status === "falhou"
+                          ? "error"
+                          : "warning"
+                      }
+                    />
+                  </TableCell>
+                  <TableCell>{execucao.versao || "-"}</TableCell>
+                  <TableCell>{execucao.ambiente || "-"}</TableCell>
+                  <TableCell>
+                    {/* <IconButton
+                      onClick={() => handleEdit(execucao.id!)}
+                      color="primary"
+                    >
+                      <EditIcon />
+                    </IconButton> */}
+                    <IconButton
+                      onClick={() => handleDelete(execucao.id!)}
+                      color="error"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

@@ -19,7 +19,6 @@ import Register from "./pages/Register";
 import ProjectProvider from "./contexts/ProjectContext";
 import SuiteProvider from "./contexts/SuiteContext";
 import TestCaseProvider from "./contexts/TestCaseContext";
-import TestResult from "./pages/TestResult";
 import TestExecutionList from "./pages/TestExecutionList";
 
 interface PrivateRouteProps {
@@ -62,14 +61,6 @@ function App() {
                     </PrivateRoute>
                   }
                 />
-                {/* <Route
-              path="/projetos/:id"
-              element={
-                <PrivateRoute>
-                  <ProjectDetails />
-                </PrivateRoute>
-              }
-            /> */}
                 <Route
                   path="/projetos/:id/dashboard"
                   element={
@@ -94,14 +85,6 @@ function App() {
                     </PrivateRoute>
                   }
                 />
-                {/* <Route
-                  path="/testresult/:testId"
-                  element={
-                    <PrivateRoute>
-                      <TestResult />
-                    </PrivateRoute>
-                  }
-                /> */}
                 <Route
                   path="/projetos/:id/bugs"
                   element={
