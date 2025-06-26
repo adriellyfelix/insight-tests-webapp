@@ -20,6 +20,7 @@ import ProjectProvider from "./contexts/ProjectContext";
 import SuiteProvider from "./contexts/SuiteContext";
 import TestCaseProvider from "./contexts/TestCaseContext";
 import TestResult from "./pages/TestResult";
+import TestExecutionList from "./pages/TestExecutionList";
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -93,14 +94,14 @@ function App() {
                     </PrivateRoute>
                   }
                 />
-                <Route
+                {/* <Route
                   path="/testresult/:testId"
                   element={
                     <PrivateRoute>
                       <TestResult />
                     </PrivateRoute>
                   }
-                />
+                /> */}
                 <Route
                   path="/projetos/:id/bugs"
                   element={
@@ -109,14 +110,14 @@ function App() {
                     </PrivateRoute>
                   }
                 />
-                {/* <Route
-              path="/projetos/:id/execucoes"
-              element={
-                <PrivateRoute>
-                  <TestExecutionList />
-                </PrivateRoute>
-              }
-            /> */}
+                <Route
+                  path="/testresult/:testId/execucoes"
+                  element={
+                    <PrivateRoute>
+                      <TestExecutionList />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path="/projetos/:id/relatorios"
                   element={

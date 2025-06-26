@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -13,58 +13,65 @@ import {
   Chip,
   CircularProgress,
   Alert,
-} from '@mui/material'
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material'
-import { useNavigate } from 'react-router-dom'
-import { execucoesApi } from '../services/api'
-import type { ExecucaoDeTeste } from '../types'
+} from "@mui/material";
+import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { execucoesApi } from "../services/api";
+import type { ExecucaoDeTeste } from "../types";
 
 const TestExecutionList: React.FC = () => {
-  const [execucoes, setExecucoes] = useState<ExecucaoDeTeste[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const navigate = useNavigate()
+  const [execucoes, setExecucoes] = useState<ExecucaoDeTeste[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    loadExecucoes()
-  }, [])
+    loadExecucoes();
+  }, []);
 
   const loadExecucoes = async () => {
     try {
-      setLoading(true)
-      const response = await execucoesApi.listar()
-      setExecucoes(response.data)
-      setError(null)
+      setLoading(true);
+      const response = await execucoesApi.listar();
+      setExecucoes(response.data);
+      setError(null);
     } catch (err) {
-      setError('Erro ao carregar execuções de teste')
-      console.error(err)
+      setError("Erro ao carregar execuções de teste");
+      console.error(err);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleEdit = (id: string) => {
-    navigate(`/execucoes-de-teste/${id}`)
-  }
+    navigate(`/execucoes-de-teste/${id}`);
+  };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Tem certeza que deseja excluir esta execução de teste?')) {
+    if (
+      window.confirm("Tem certeza que deseja excluir esta execução de teste?")
+    ) {
       try {
-        await execucoesApi.excluir(id)
-        setExecucoes(execucoes.filter((execucao) => execucao.id !== id))
+        await execucoesApi.excluir(id);
+        setExecucoes(execucoes.filter((execucao) => execucao.id !== id));
       } catch (err) {
-        setError('Erro ao excluir execução de teste')
-        console.error(err)
+        setError("Erro ao excluir execução de teste");
+        console.error(err);
       }
     }
-  }
+  };
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="200px"
+      >
         <CircularProgress />
       </Box>
-    )
+    );
   }
 
   if (error) {
@@ -72,7 +79,7 @@ const TestExecutionList: React.FC = () => {
       <Box mt={2}>
         <Alert severity="error">{error}</Alert>
       </Box>
-    )
+    );
   }
 
   return (
@@ -102,21 +109,27 @@ const TestExecutionList: React.FC = () => {
                   <Chip
                     label={execucao.status}
                     color={
-                      execucao.status === 'passou'
-                        ? 'success'
-                        : execucao.status === 'falhou'
-                        ? 'error'
-                        : 'warning'
+                      execucao.status === "passou"
+                        ? "success"
+                        : execucao.status === "falhou"
+                        ? "error"
+                        : "warning"
                     }
                   />
                 </TableCell>
-                <TableCell>{execucao.versao || '-'}</TableCell>
-                <TableCell>{execucao.ambiente || '-'}</TableCell>
+                <TableCell>{execucao.versao || "-"}</TableCell>
+                <TableCell>{execucao.ambiente || "-"}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleEdit(execucao.id)} color="primary">
+                  <IconButton
+                    onClick={() => handleEdit(execucao.id!)}
+                    color="primary"
+                  >
                     <EditIcon />
                   </IconButton>
-                  <IconButton onClick={() => handleDelete(execucao.id)} color="error">
+                  <IconButton
+                    onClick={() => handleDelete(execucao.id!)}
+                    color="error"
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -126,7 +139,7 @@ const TestExecutionList: React.FC = () => {
         </Table>
       </TableContainer>
     </Box>
-  )
-}
+  );
+};
 
-export default TestExecutionList 
+export default TestExecutionList;

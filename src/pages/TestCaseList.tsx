@@ -109,7 +109,6 @@ const TestCaseList: React.FC = () => {
                 <TableRow key={caso.id}>
                   <TableCell>{caso.titulo}</TableCell>
                   <TableCell>{caso.descricao}</TableCell>
-                  {/* <TableCell>{caso.passos}</TableCell> */}
                   <TableCell>
                     <ul
                       style={{ margin: 0, padding: 0, listStyleType: "none" }}
@@ -128,18 +127,13 @@ const TestCaseList: React.FC = () => {
                       color="primary"
                     >
                       Executar
-                      {/* <input
-                        type="file"
-                        hidden
-                        // onChange={(e) =>
-                        //   handleFileUpload(caso.id, e.target.files)
-                        // }
-                      /> */}
                     </Button>
                   </TableCell>
                   <TableCell>
                     {testStarted.get(caso.id) ? (
-                      <a href={`/testresult/${casoDeTesteId}`}>Visualizar</a>
+                      <a href={`/testresult/${casoDeTesteId}/execucoes`}>
+                        Visualizar
+                      </a>
                     ) : (
                       <span>Resultado ainda não gerado</span>
                     )}
@@ -151,13 +145,7 @@ const TestCaseList: React.FC = () => {
                         component="label"
                         color="error"
                       >
-                        <input
-                          type="file"
-                          hidden
-                          // onChange={(e) =>
-                          //   handleFileUpload(caso.id, e.target.files)
-                          // }
-                        />
+                        <input type="file" hidden />
                         Incluir evidência
                       </Button>
                     </TableCell>
