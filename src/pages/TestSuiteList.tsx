@@ -35,6 +35,7 @@ const TestSuiteList: React.FC = () => {
     handleOpenModal,
     suitList,
     openModal,
+    name,
     setName,
     setType,
     handleClosedModal,
@@ -44,6 +45,7 @@ const TestSuiteList: React.FC = () => {
     handleDeleteSuite,
     handleUpdateSuite,
     editSuite,
+    description,
   } = useSuite();
 
   return (
@@ -124,6 +126,10 @@ const TestSuiteList: React.FC = () => {
               onChange={(e) => setName(e.target.value)}
               fullWidth
               required
+              error={name.trim() === ""}
+              helperText={
+                name.trim() === "" ? "O nome da suite é obrigatório" : ""
+              }
             />
             <TextField
               name="descricao"
@@ -131,6 +137,11 @@ const TestSuiteList: React.FC = () => {
               onChange={(e) => setDescription(e.target.value)}
               fullWidth
               multiline
+              required
+              error={description.trim() === ""}
+              helperText={
+                name.trim() === "" ? "A descrição da suite é obrigatório" : ""
+              }
               rows={3}
             />
             <TextField

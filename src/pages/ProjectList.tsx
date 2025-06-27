@@ -22,6 +22,7 @@ import {
 } from "@mui/material";
 import Sidebar from "../components/Sidebar";
 import useProject from "../hooks/useProject";
+import { storage } from "../storage";
 
 const ProjectList: React.FC = () => {
   const {
@@ -46,6 +47,7 @@ const ProjectList: React.FC = () => {
   useEffect(() => {
     loadProjetos();
   }, []);
+  const userId = storage.parse("@Insights:user").id;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -221,7 +223,9 @@ const ProjectList: React.FC = () => {
             </Button>
             <Button
               onClick={
-                editingProjectId ? handleUpdateProject : handleCreateProject
+                editingProjectId
+                  ? handleUpdateProject
+                  : () => handleCreateProject(userId!)
               }
               variant="contained"
               color="primary"

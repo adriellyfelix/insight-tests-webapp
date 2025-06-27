@@ -5,6 +5,7 @@ export interface Projeto {
   status: string;
   versao: string;
   metadados?: Record<string, any>;
+  usuarioId?: string;
 }
 
 export interface CasoDeTeste {

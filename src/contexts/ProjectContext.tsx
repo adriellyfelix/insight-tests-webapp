@@ -20,7 +20,7 @@ interface ProjectContextData {
   setNovoProjeto: React.Dispatch<React.SetStateAction<any>>;
   handleOpenModal: (project?: Projeto) => void;
   handleCloseModal: () => void;
-  handleCreateProject: () => void;
+  handleCreateProject: (userId: string) => void;
   handleUpdateProject: () => void;
   handleDeleteProject: (id: string) => void;
   loadProjetos: () => void;
@@ -99,7 +99,7 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
     setError(null);
   };
 
-  const handleCreateProject = async () => {
+  const handleCreateProject = async (userId: string) => {
     try {
       if (!novoProjeto.nome.trim()) {
         setError("O nome do projeto é obrigatório");
@@ -107,12 +107,12 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
       }
 
       setCreating(true);
-      console.log("Dados enviados à API:", novoProjeto);
       const response = await projetosApi.criar({
         nome: novoProjeto.nome.trim().toLocaleLowerCase(),
         descricao: novoProjeto.descricao.trim(),
         status: novoProjeto.status,
         versao: novoProjeto.versao.trim(),
+        usuarioId: userId,
       });
       if (response.data) {
         // Adiciona o novo projeto à lista e ordena
