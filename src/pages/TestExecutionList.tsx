@@ -92,7 +92,7 @@ const TestExecutionList: React.FC = () => {
         </Typography>
         <Box>
           <Typography variant="h6" gutterBottom>
-            Resultados arquivados
+            Resultados antigos
           </Typography>
           <Button
             onClick={() => setArquivado(!arquivado)}
@@ -100,7 +100,7 @@ const TestExecutionList: React.FC = () => {
             color="primary"
             sx={{ mb: 2 }}
           >
-            {arquivado ? "Arquivar" : "Desarquivar"}
+            {arquivado ? "Ocultar" : "Exibir"}
           </Button>
         </Box>
       </Box>

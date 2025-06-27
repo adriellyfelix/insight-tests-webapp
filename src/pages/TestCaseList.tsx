@@ -18,6 +18,8 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  MenuItem,
+  Chip,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useParams } from "react-router-dom";
@@ -43,6 +45,7 @@ const TestCaseList: React.FC = () => {
     handleDelete,
     handleEdit,
     runTestCase,
+    setStatusExecucao,
     testStarted,
     testStatus,
   } = useCaseTest();
@@ -100,7 +103,7 @@ const TestCaseList: React.FC = () => {
                 <TableCell>Resultado esperado</TableCell>
                 <TableCell>Executar teste</TableCell>
                 <TableCell>Visualizar resultado</TableCell>
-                {testStatus === "falhou" && <TableCell>Anexo</TableCell>}
+                <TableCell>Bugs</TableCell>
                 <TableCell>Ações</TableCell>
               </TableRow>
             </TableHead>
@@ -138,7 +141,8 @@ const TestCaseList: React.FC = () => {
                       <span>Resultado ainda não gerado</span>
                     )}
                   </TableCell>
-                  {testStatus === "falhou" && (
+                  {testStatus.get(caso.id) === "falhou" ||
+                  testStatus.get(caso.id) === "bloqueado" ? (
                     <TableCell>
                       <Button
                         variant="contained"
@@ -149,6 +153,8 @@ const TestCaseList: React.FC = () => {
                         Incluir evidência
                       </Button>
                     </TableCell>
+                  ) : (
+                    <TableCell>Nenhum Bug</TableCell>
                   )}
                   {/* <TableCell>
                     <Chip
@@ -220,7 +226,17 @@ const TestCaseList: React.FC = () => {
               rows={3}
               fullWidth
             ></TextField>
-
+            <TextField
+              name="status"
+              label="Status"
+              select
+              fullWidth
+              onChange={(e) => setStatusExecucao(e.target.value)}
+            >
+              <MenuItem value="passou">Passou</MenuItem>
+              <MenuItem value="falhou">Falhou</MenuItem>
+              <MenuItem value="bloqueado">Bloqueado</MenuItem>
+            </TextField>
             <TextField
               name="resultadoEsperado"
               label="Resultado esperado"

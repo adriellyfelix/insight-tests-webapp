@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -40,46 +40,9 @@ import {
   CartesianGrid,
 } from "recharts";
 import Sidebar from "../components/Sidebar";
-
-const metricCards = [
-  {
-    label: "Total de testes",
-    value: 890,
-    diff: -112,
-    percent: 18,
-    color: "#E9FFF2",
-    textColor: "#1A7F37",
-    subColor: "#1A7F37",
-  },
-  {
-    label: "Passou",
-    value: 1234,
-    diff: -20,
-    percent: 18,
-    color: "#FFFFE9",
-    textColor: "#7F6F1A",
-    subColor: "#7F6F1A",
-  },
-  {
-    label: "Bloqueados",
-    value: 567,
-    diff: -12,
-    percent: 18,
-    color: "#E9F3FF",
-    textColor: "#1A4A7F",
-    subColor: "#1A4A7F",
-  },
-  {
-    label: "Falhou",
-    value: 123,
-    diff: 33,
-    percent: 18,
-    color: "#FFE9E9",
-    textColor: "#7F1A1A",
-    subColor: "#7F1A1A",
-  },
-];
-
+import { storage } from "../storage";
+import { dashboard } from "../services/api";
+import type { Resumo } from "../types";
 const lineData = [
   { name: "JAN", value: 35 },
   { name: "FEV", value: 55 },
@@ -120,6 +83,59 @@ const sidebarItems = [
 ];
 
 const Dashboard: React.FC = () => {
+  const user = storage.parse("@Insights:user");
+  const [resumo, setResumo] = useState<Resumo | null>(null);
+  console.log(resumo);
+  const metricCards = [
+    {
+      label: "Total de testes",
+      value: resumo?.totalCasos,
+      diff: -112,
+      percent: 18,
+      color: "#E9FFF2",
+      textColor: "#1A7F37",
+      subColor: "#1A7F37",
+    },
+    {
+      label: "Passou",
+      value: resumo?.execucoesPassou,
+      diff: -20,
+      percent: 18,
+      color: "#FFFFE9",
+      textColor: "#7F6F1A",
+      subColor: "#7F6F1A",
+    },
+    {
+      label: "Bloqueados",
+      value: resumo?.execucoesBloqueado,
+      diff: -12,
+      percent: 18,
+      color: "#E9F3FF",
+      textColor: "#1A4A7F",
+      subColor: "#1A4A7F",
+    },
+    {
+      label: "Falhou",
+      value: resumo?.execucoesFalhou,
+      diff: 33,
+      percent: 18,
+      color: "#FFE9E9",
+      textColor: "#7F1A1A",
+      subColor: "#7F1A1A",
+    },
+  ];
+  useEffect(() => {
+    loadResumo();
+  }, []);
+
+  const loadResumo = async () => {
+    try {
+      const response = await dashboard.resumo();
+      setResumo(response.data);
+    } catch (error) {
+      console.error("Erro ao obter resumo", error);
+    }
+  };
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#F8FAFB" }}>
       <Sidebar selected="dashboard" />
@@ -147,10 +163,10 @@ const Dashboard: React.FC = () => {
               <SearchIcon />
             </IconButton>
             <Avatar
-              alt="Adri Costa"
+              alt={user.nome}
               src="https://randomuser.me/api/portraits/men/32.jpg"
             />
-            <Typography fontWeight={500}>Adri Costa</Typography>
+            <Typography fontWeight={500}>{user.nome}</Typography>
             <ExpandMoreIcon />
           </Box>
         </Box>
@@ -172,7 +188,7 @@ const Dashboard: React.FC = () => {
                 {card.label}
               </Typography>
               <Typography variant="h3" fontWeight={700} color={card.textColor}>
-                {card.value.toLocaleString("pt-BR")}
+                {card.value?.toLocaleString("pt-BR")}
               </Typography>
               <Typography
                 fontSize={14}

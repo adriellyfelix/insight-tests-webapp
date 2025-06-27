@@ -181,6 +181,13 @@ const ProjectList: React.FC = () => {
                 label="Descrição"
                 value={novoProjeto.descricao}
                 onChange={handleInputChange}
+                required
+                error={!!error && !novoProjeto.descricao.trim()}
+                helperText={
+                  error && !novoProjeto.descricao.trim()
+                    ? "A descrição do projeto é obrigatório"
+                    : ""
+                }
                 fullWidth
                 multiline
                 rows={3}

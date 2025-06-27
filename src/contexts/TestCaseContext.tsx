@@ -43,6 +43,11 @@ interface TestCaseContextData {
   testStatus: any;
   setTestStatus: React.Dispatch<React.SetStateAction<any>>;
 
+  statusExecucao: string;
+  setStatusExecucao: React.Dispatch<
+    React.SetStateAction<"passou" | "falhou" | "bloqueado">
+  >;
+
   handleOpenModalEdit: (idCasoDeTeste?: string) => void;
   handleOpenModalCreate: () => void;
   handleClosedModal: () => void;
@@ -78,7 +83,10 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
   const [testStarted, setTestStarted] = useState<Map<string, boolean>>(
     new Map()
   );
-  const [testStatus, setTestStatus] = useState<any>();
+  const [testStatus, setTestStatus] = useState<Map<string, string>>(new Map());
+  const [statusExecucao, setStatusExecucao] = useState<
+    "passou" | "falhou" | "bloqueado"
+  >("passou");
 
   const handleOpenModalEdit = (idCasoDeTesteEdit?: string) => {
     setEditTest(false);
@@ -164,8 +172,9 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
 
   const runTestCase = async (caso_id: string, suite_id: string) => {
     try {
+      console.log(statusExecucao);
       const payload: ExecucaoDeTeste = {
-        status: "passou",
+        status: statusExecucao,
         caso_id,
         suite_id,
       };
@@ -176,7 +185,11 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
         return newMap;
       });
 
-      setTestStatus(response.data.status);
+      setTestStatus((prevMap) => {
+        const newMap = new Map(prevMap);
+        newMap.set(caso_id, response.data.status);
+        return newMap;
+      });
 
       console.log("Execução de teste criada.");
     } catch (error) {
@@ -199,6 +212,7 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
         idCasoDeTeste,
         testStarted,
         testStatus,
+        statusExecucao,
         setTestStarted,
         setCasosDeTeste,
         setName,
@@ -220,6 +234,7 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
         handleOpenModalEdit,
         runTestCase,
         setTestStatus,
+        setStatusExecucao,
       }}
     >
       {children};

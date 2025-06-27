@@ -58,3 +58,16 @@ export interface ExecucaoDeTeste {
   ambiente?: string;
   metadados?: Record<string, any>;
 }
+
+export type Resumo = {
+  totalProjetos: number;
+  projetosAtivos: number;
+  totalBugs: number;
+  bugsAbertos: number;
+  totalSuites: number;
+  totalCasos: number;
+  totalRegras: number;
+  execucoesPassou: number;
+  execucoesFalhou: number;
+  execucoesBloqueado: number;
+};
