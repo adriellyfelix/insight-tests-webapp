@@ -19,7 +19,6 @@ import {
   DialogActions,
   TextField,
   MenuItem,
-  Chip,
 } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useParams } from "react-router-dom";
@@ -33,6 +32,13 @@ const TestCaseList: React.FC = () => {
     editTest,
     error,
     casosDeTeste,
+    testStarted,
+    testStatus,
+    expectedResult,
+    statusExecucao,
+    name,
+    description,
+    steps,
     setName,
     setDescription,
     setSteps,
@@ -46,8 +52,6 @@ const TestCaseList: React.FC = () => {
     handleEdit,
     runTestCase,
     setStatusExecucao,
-    testStarted,
-    testStatus,
   } = useCaseTest();
 
   const { suiteId } = useParams();
@@ -58,26 +62,6 @@ const TestCaseList: React.FC = () => {
     loadCasosDeTeste(suiteId);
   }, []);
 
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="200px"
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box mt={2}>
-        <Alert severity="error">{error}</Alert>
-      </Box>
-    );
-  }
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#F8FAFB" }}>
       <Sidebar selected="caso-de-teste" />
@@ -93,6 +77,16 @@ const TestCaseList: React.FC = () => {
         >
           Novo caso de teste
         </Button>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+        {loading && (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+            <CircularProgress />
+          </Box>
+        )}
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -205,10 +199,14 @@ const TestCaseList: React.FC = () => {
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}>
             <TextField
               name="nome"
-              label="Caso de teste"
+              label="Título"
               onChange={(e) => setName(e.target.value)}
               fullWidth
               required
+              error={!!error && !name.trim()}
+              helperText={
+                error && !name.trim() ? "Este campo é obrigatório!" : ""
+              }
             />
             <TextField
               name="descricao"
@@ -217,6 +215,11 @@ const TestCaseList: React.FC = () => {
               fullWidth
               multiline
               rows={3}
+              required
+              error={!!error && !description.trim()}
+              helperText={
+                error && !description.trim() ? "Este campo é obrigatório!" : ""
+              }
             />
             <TextField
               name="passos"
@@ -225,12 +228,18 @@ const TestCaseList: React.FC = () => {
               multiline
               rows={3}
               fullWidth
+              required
+              error={!!error && steps.length === 0}
+              helperText={
+                error && steps.length === 0 ? "Este campo é obrigatório!" : ""
+              }
             ></TextField>
             <TextField
               name="status"
               label="Status"
               select
               fullWidth
+              // @ts-ignore
               onChange={(e) => setStatusExecucao(e.target.value)}
             >
               <MenuItem value="passou">Passou</MenuItem>
@@ -242,6 +251,13 @@ const TestCaseList: React.FC = () => {
               label="Resultado esperado"
               fullWidth
               onChange={(e) => setExpectedResult(e.target.value)}
+              required
+              error={!!error && !expectedResult.trim()}
+              helperText={
+                error && !expectedResult.trim()
+                  ? "Este campo é obrigatório!"
+                  : ""
+              }
             ></TextField>
           </Box>
         </DialogContent>

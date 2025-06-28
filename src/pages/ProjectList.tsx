@@ -31,9 +31,7 @@ const ProjectList: React.FC = () => {
     handleUpdateProject,
     handleDeleteProject,
     loadProjetos,
-
     setNovoProjeto,
-
     loading,
     error,
     creating,
@@ -172,7 +170,7 @@ const ProjectList: React.FC = () => {
                 error={!!error && !novoProjeto.nome.trim()}
                 helperText={
                   error && !novoProjeto.nome.trim()
-                    ? "O nome do projeto é obrigatório"
+                    ? "O nome do projeto é obrigatório!"
                     : ""
                 }
               />
@@ -185,7 +183,7 @@ const ProjectList: React.FC = () => {
                 error={!!error && !novoProjeto.descricao.trim()}
                 helperText={
                   error && !novoProjeto.descricao.trim()
-                    ? "A descrição do projeto é obrigatório"
+                    ? "A descrição do projeto é obrigatória!"
                     : ""
                 }
                 fullWidth

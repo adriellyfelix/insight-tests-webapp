@@ -15,6 +15,8 @@ import {
   DialogActions,
   TextField,
   MenuItem,
+  Alert,
+  CircularProgress,
 } from "@mui/material";
 
 import Sidebar from "../components/Sidebar";
@@ -31,12 +33,15 @@ const TestSuiteList: React.FC = () => {
   }, []);
 
   const {
-    loadDataSuite,
-    handleOpenModal,
     suitList,
     openModal,
+    editSuite,
+    loading,
     name,
+    type,
     setName,
+    loadDataSuite,
+    handleOpenModal,
     setType,
     handleClosedModal,
     setVersion,
@@ -44,8 +49,7 @@ const TestSuiteList: React.FC = () => {
     handleCreateSuite,
     handleDeleteSuite,
     handleUpdateSuite,
-    editSuite,
-    description,
+    error,
   } = useSuite();
 
   return (
@@ -53,7 +57,7 @@ const TestSuiteList: React.FC = () => {
       <Sidebar selected="suites" />
       <Box sx={{ flex: 1, p: 4 }}>
         <Typography variant="h4" fontWeight={700} gutterBottom>
-          Suites de Teste
+          Suítes de Teste
         </Typography>
         <Button
           onClick={() => handleOpenModal(true)}
@@ -63,11 +67,22 @@ const TestSuiteList: React.FC = () => {
         >
           Nova suite
         </Button>
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+        {loading && (
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+            <CircularProgress />
+          </Box>
+        )}
         <Paper sx={{ p: 3, mt: 2 }}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Nome da suite</TableCell>
+                <TableCell>Nome da suíte</TableCell>
                 <TableCell>Descrição</TableCell>
                 <TableCell>Versão</TableCell>
                 <TableCell>Caso de teste</TableCell>
@@ -78,7 +93,7 @@ const TestSuiteList: React.FC = () => {
               {suitList?.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} align="center">
-                    Nenhum suite encontrado.
+                    Nenhuma suíte encontrada.
                   </TableCell>
                 </TableRow>
               ) : (
@@ -117,7 +132,9 @@ const TestSuiteList: React.FC = () => {
         </Paper>
       </Box>
       <Dialog open={openModal} maxWidth="sm" fullWidth>
-        <DialogTitle>Criar Nova Suite</DialogTitle>
+        <DialogTitle>
+          {editSuite ? "Criar nova suíte" : "Editar suíte "}
+        </DialogTitle>
         <DialogContent>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, pt: 2 }}>
             <TextField
@@ -126,9 +143,9 @@ const TestSuiteList: React.FC = () => {
               onChange={(e) => setName(e.target.value)}
               fullWidth
               required
-              error={name.trim() === ""}
+              error={!!error && !name.trim()}
               helperText={
-                name.trim() === "" ? "O nome da suite é obrigatório" : ""
+                error && !name.trim() ? "O nome da suíte é obrigatório!" : ""
               }
             />
             <TextField
@@ -137,17 +154,11 @@ const TestSuiteList: React.FC = () => {
               onChange={(e) => setDescription(e.target.value)}
               fullWidth
               multiline
-              required
-              error={description.trim() === ""}
-              helperText={
-                name.trim() === "" ? "A descrição da suite é obrigatório" : ""
-              }
               rows={3}
             />
             <TextField
               name="Versao"
               label="Versão"
-              // value={novoProjeto.status}
               onChange={(e) => setVersion(e.target.value)}
               fullWidth
             ></TextField>
@@ -157,6 +168,11 @@ const TestSuiteList: React.FC = () => {
               label="Tipo"
               select
               fullWidth
+              required
+              error={!!error && !type.length}
+              helperText={
+                error && !type.length ? "O tipo da suíte é obrigatório!" : ""
+              }
               onChange={(e) => setType(e.target.value)}
             >
               <MenuItem value="funcional">Funcional</MenuItem>

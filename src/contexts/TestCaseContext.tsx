@@ -118,11 +118,24 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
     }
   };
   const handleCreate = async (projectId: string, suiteId: string) => {
+    const cleanedSteps = steps
+      .map((step) => step.trim())
+      .filter((step) => step);
+    if (
+      !name.trim() ||
+      !description.trim() ||
+      !expectedResult.trim() ||
+      !cleanedSteps.length
+    ) {
+      setError("Preencha os campos obrigatórios!");
+      return;
+    }
     try {
+      setLoading(true);
       const payload: any = {
         titulo: name.trim(),
         descricao: description.trim(),
-        passos: steps,
+        passos: cleanedSteps,
         resultadoEsperado: expectedResult.trim(),
         projeto_id: projectId,
         suite_id: suiteId,
@@ -130,15 +143,33 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
       const response = await casosDeTesteApi.criar(payload);
       setCasosDeTeste((prevCasos) => [...prevCasos, response.data]);
       localStorage.setItem("casoDeTesteId", response.data.id);
-      console.log("Caso de teste criado");
       setOpenModal(false);
+      setName("");
+      setDescription("");
+      setExpectedResult("");
+      setSteps([]);
     } catch (error) {
       console.log("Erro ao criar caso de teste", error);
+    } finally {
+      setLoading(false);
     }
   };
   const handleEdit = async (id: string) => {
+    const cleanedSteps = steps
+      .map((step) => step.trim())
+      .filter((step) => step);
+    if (
+      !name.trim() ||
+      !description.trim() ||
+      !expectedResult.trim() ||
+      !cleanedSteps.length
+    ) {
+      setError("Preencha os campos obrigatórios!");
+      return;
+    }
     setOpenModal(true);
     try {
+      setLoading(true);
       const payload: Partial<CasoDeTeste> = {
         titulo: name.trim(),
         descricao: description.trim(),
@@ -154,24 +185,30 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
       console.log("dados atualizados");
     } catch (error) {
       console.error("erro ao atualizar caso de teste", error);
+    } finally {
+      setLoading(false);
+      setOpenModal(false);
     }
-    setOpenModal(false);
   };
 
   const handleDelete = async (id: string) => {
     if (window.confirm("Tem certeza que deseja excluir este caso de teste?")) {
       try {
+        setLoading(true);
         await casosDeTesteApi.excluir(id);
         setCasosDeTeste(casosDeTeste.filter((caso) => caso.id !== id));
       } catch (err) {
         setError("Erro ao excluir caso de teste");
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const runTestCase = async (caso_id: string, suite_id: string) => {
     try {
+      setLoading(true);
       console.log(statusExecucao);
       const payload: ExecucaoDeTeste = {
         status: statusExecucao,
@@ -194,6 +231,8 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
       console.log("Execução de teste criada.");
     } catch (error) {
       console.error("Erro ao executar caso de teste");
+    } finally {
+      setLoading(false);
     }
   };
   return (

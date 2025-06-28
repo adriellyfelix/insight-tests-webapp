@@ -20,6 +20,12 @@ interface SuiteContextData {
   suiteId: string;
   setSuiteId: React.Dispatch<React.SetStateAction<string>>;
 
+  error: string | null;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+
   handleOpenModal: (called: boolean, suitId?: string) => void;
   handleClosedModal: () => void;
   handleCreateSuite: (id: string | undefined) => void;
@@ -45,7 +51,8 @@ export default function SuiteProvider({ children }: SuiteProps) {
   const [openModal, setOpenModal] = useState(false);
   const [editSuite, setEditSuite] = useState(false);
   const [suiteId, setSuiteId] = useState("");
-
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const handleOpenModal = (called: boolean, suitId?: string) => {
     setOpenModal(true);
 
@@ -63,6 +70,7 @@ export default function SuiteProvider({ children }: SuiteProps) {
 
   const loadDataSuite = async (id: string | undefined) => {
     try {
+      setLoading(true);
       const response = await suitesDeTesteApi.listar();
       const filteredSuites = response.data.filter(
         (suite: SuiteDeTeste) => suite.projeto_id === id
@@ -70,19 +78,27 @@ export default function SuiteProvider({ children }: SuiteProps) {
       setSuitList(filteredSuites);
     } catch (err) {
       console.error("Erro ao listar suites", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleCreateSuite = async (id: string | undefined) => {
-    const payload: any = {
-      nome: name.trim(),
-      versao: version.trim(),
-      descricao: description.trim(),
-      tipo: type,
-      projeto_id: id,
-      ativa: false,
-    };
+    if (!name.trim() || !type.trim()) {
+      setError("Preencha os campos obrigatórios!");
+      return;
+    }
     try {
+      setLoading(true);
+
+      const payload: any = {
+        nome: name.trim(),
+        versao: version.trim(),
+        descricao: description.trim(),
+        tipo: type,
+        projeto_id: id,
+        ativa: false,
+      };
       const response = await suitesDeTesteApi.criar(payload);
       setSuitList((prevSuitList) => [...(prevSuitList || []), response.data]);
       handleClosedModal();
@@ -92,28 +108,38 @@ export default function SuiteProvider({ children }: SuiteProps) {
       setType("");
     } catch (err) {
       console.error("Erro ao listar suites", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDeleteSuite = async (id: string) => {
     try {
+      setLoading(true);
       await suitesDeTesteApi.excluir(id);
       setSuitList((prevSuitList) =>
         prevSuitList?.filter((suite) => suite.id !== id)
       );
     } catch (error) {
       console.error("Erro ao excluir suite");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleUpdateSuite = async () => {
-    const payload: any = {
-      nome: name.trim(),
-      versao: version.trim(),
-      descricao: description.trim(),
-      tipo: type,
-    };
+    if (!name.trim() || !type.trim()) {
+      setError("Preencha os campos obrigatórios!");
+      return;
+    }
     try {
+      setLoading(true);
+      const payload: any = {
+        nome: name.trim(),
+        versao: version.trim(),
+        descricao: description.trim(),
+        tipo: type,
+      };
       const response = await suitesDeTesteApi.atualizar(suiteId, payload);
       setSuitList((prevSuitList) =>
         prevSuitList?.map((suite) =>
@@ -127,6 +153,8 @@ export default function SuiteProvider({ children }: SuiteProps) {
       setType("");
     } catch (error) {
       console.error("Erro ao editar o projeto", error);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -140,6 +168,10 @@ export default function SuiteProvider({ children }: SuiteProps) {
         openModal,
         editSuite,
         suiteId,
+        error,
+        loading,
+        setLoading,
+        setError,
         setSuiteId,
         setEditSuite,
         setName,
