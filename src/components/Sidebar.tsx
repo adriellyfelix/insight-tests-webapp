@@ -23,6 +23,7 @@ import {
 } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router-dom";
 import useProject from "../hooks/useProject";
+import { useAuth } from "../contexts/AuthContext";
 
 interface SidebarProps {
   selected?: string;
@@ -30,6 +31,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
   const { projetos } = useProject();
+  const { signOut } = useAuth();
   const [showProjects, setShowProjects] = useState(false);
 
   const toggleProjects = () => setShowProjects(!showProjects);
@@ -187,7 +189,7 @@ const Sidebar: React.FC<SidebarProps> = ({ selected }) => {
               <ListItemIcon>
                 <LogoutIcon />
               </ListItemIcon>
-              <ListItemText primary="Sair" />
+              <ListItemText onClick={signOut} primary="Sair" />
             </ListItemButton>
           </ListItem>
         </List>

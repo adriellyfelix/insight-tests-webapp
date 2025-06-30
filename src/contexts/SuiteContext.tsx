@@ -54,6 +54,13 @@ export default function SuiteProvider({ children }: SuiteProps) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const handleOpenModal = (called: boolean, suitId?: string) => {
+    const selected = suitList?.find((suite) => suite.id === suitId);
+    if (selected) {
+      setName(selected.nome);
+      setDescription(selected.descricao!);
+      setVersion(selected.versao!);
+      setType(selected.tipo);
+    }
     setOpenModal(true);
 
     if (called) {

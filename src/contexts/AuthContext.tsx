@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import type { ReactNode } from "react";
 import { authApi } from "../services/api";
+import { storage } from "../storage";
 //import { mockLogin } from "../mocks/auth";
 interface User {
   id: string;
@@ -58,15 +59,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
         email: userData.email,
         //avatar: userData.avatar,
       });
-      console.log(user);
     } catch (error) {
       throw new Error("Falha na autenticação");
     }
   }, []);
 
   const signOut = useCallback(() => {
-    localStorage.removeItem("@Insights:token");
-    localStorage.removeItem("@Insights:user");
+    storage.clear();
     setUser(null);
     authApi.logout();
   }, []);

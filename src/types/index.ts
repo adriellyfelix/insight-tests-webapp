@@ -72,3 +72,13 @@ export type Resumo = {
   execucoesFalhou: number;
   execucoesBloqueado: number;
 };
+
+export type User = {
+  ativo: boolean;
+  criadoEm: string;
+  email: string;
+  id: string;
+  nome: string;
+  role: string;
+  senha: string;
+};

@@ -106,6 +106,7 @@ export const authApi = {
     api.post("/auth/forgot-password", { email }),
   resetPassword: (token: string, password: string) =>
     api.post("/auth/reset-password", { token, password }),
+  listarUsuarios: () => api.get<any>("/usuarios"),
 };
 // Dashboard
 export const dashboard = {

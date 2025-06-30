@@ -2,6 +2,7 @@ import { createContext, useState } from "react";
 import type { CasoDeTeste } from "../types";
 import { casosDeTesteApi, execucoesApi } from "../services/api";
 import type { ExecucaoDeTeste } from "../types";
+import { storage } from "../storage";
 
 interface TestCaseContextData {
   loading: boolean;
@@ -48,6 +49,9 @@ interface TestCaseContextData {
     React.SetStateAction<"passou" | "falhou" | "bloqueado">
   >;
 
+  file: File | null;
+  setFile: React.Dispatch<React.SetStateAction<File | null>>;
+
   handleOpenModalEdit: (idCasoDeTeste?: string) => void;
   handleOpenModalCreate: () => void;
   handleClosedModal: () => void;
@@ -56,6 +60,7 @@ interface TestCaseContextData {
   handleEdit: (id: string) => void;
   handleDelete: (id: string) => void;
   runTestCase: (caso_id: string, suite_id: string) => void;
+  includeEvidence: (e: any) => void;
 }
 
 interface TestCaseContextProps {
@@ -87,12 +92,21 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
   const [statusExecucao, setStatusExecucao] = useState<
     "passou" | "falhou" | "bloqueado"
   >("passou");
+  const [file, setFile] = useState<File | null>(null);
 
   const handleOpenModalEdit = (idCasoDeTesteEdit?: string) => {
+    const selected = casosDeTeste.find((caso) => caso.id === idCasoDeTesteEdit);
+    if (selected) {
+      setName(selected.titulo);
+      setDescription(selected.descricao);
+      setSteps(selected.passos);
+      setExpectedResult(selected.resultadoEsperado);
+    }
     setEditTest(false);
     setOpenModal(true);
     setSelectedTestCase(idCasoDeTesteEdit);
   };
+
   const handleOpenModalCreate = () => {
     setEditTest(true);
     setOpenModal(true);
@@ -235,6 +249,14 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
       setLoading(false);
     }
   };
+
+  const includeEvidence = (event: any) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      storage.set("evidence", selectedFile.name);
+    }
+  };
+
   return (
     <TestCaseContext.Provider
       value={{
@@ -252,6 +274,8 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
         testStarted,
         testStatus,
         statusExecucao,
+        file,
+        includeEvidence,
         setTestStarted,
         setCasosDeTeste,
         setName,
@@ -274,6 +298,7 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
         runTestCase,
         setTestStatus,
         setStatusExecucao,
+        setFile,
       }}
     >
       {children};

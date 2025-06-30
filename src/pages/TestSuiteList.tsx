@@ -39,6 +39,9 @@ const TestSuiteList: React.FC = () => {
     loading,
     name,
     type,
+    version,
+    description,
+    error,
     setName,
     loadDataSuite,
     handleOpenModal,
@@ -49,7 +52,6 @@ const TestSuiteList: React.FC = () => {
     handleCreateSuite,
     handleDeleteSuite,
     handleUpdateSuite,
-    error,
   } = useSuite();
 
   return (
@@ -140,6 +142,7 @@ const TestSuiteList: React.FC = () => {
             <TextField
               name="nome"
               label="Nome da suite"
+              value={name}
               onChange={(e) => setName(e.target.value)}
               fullWidth
               required
@@ -151,6 +154,7 @@ const TestSuiteList: React.FC = () => {
             <TextField
               name="descricao"
               label="Descrição"
+              value={description}
               onChange={(e) => setDescription(e.target.value)}
               fullWidth
               multiline
@@ -159,6 +163,7 @@ const TestSuiteList: React.FC = () => {
             <TextField
               name="Versao"
               label="Versão"
+              value={version}
               onChange={(e) => setVersion(e.target.value)}
               fullWidth
             ></TextField>
@@ -166,6 +171,8 @@ const TestSuiteList: React.FC = () => {
             <TextField
               name="tipo"
               label="Tipo"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
               select
               fullWidth
               required
@@ -173,7 +180,6 @@ const TestSuiteList: React.FC = () => {
               helperText={
                 error && !type.length ? "O tipo da suíte é obrigatório!" : ""
               }
-              onChange={(e) => setType(e.target.value)}
             >
               <MenuItem value="funcional">Funcional</MenuItem>
               <MenuItem value="regressao">Regressão</MenuItem>

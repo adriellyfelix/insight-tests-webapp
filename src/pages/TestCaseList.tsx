@@ -24,6 +24,7 @@ import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import useCaseTest from "../hooks/useCaseTest";
+import { storage } from "../storage";
 const TestCaseList: React.FC = () => {
   const {
     openModal,
@@ -35,10 +36,11 @@ const TestCaseList: React.FC = () => {
     testStarted,
     testStatus,
     expectedResult,
-    statusExecucao,
     name,
     description,
     steps,
+    file,
+    setFile,
     setName,
     setDescription,
     setSteps,
@@ -52,12 +54,14 @@ const TestCaseList: React.FC = () => {
     handleEdit,
     runTestCase,
     setStatusExecucao,
+    includeEvidence,
   } = useCaseTest();
 
   const { suiteId } = useParams();
 
   const projectId = localStorage.getItem("projectId");
   const casoDeTesteId = localStorage.getItem("casoDeTesteId");
+
   useEffect(() => {
     loadCasosDeTeste(suiteId);
   }, []);
@@ -141,7 +145,9 @@ const TestCaseList: React.FC = () => {
                       <Button
                         variant="contained"
                         component="label"
+                        onChange={(e) => includeEvidence(e)}
                         color="error"
+                        onClick={includeEvidence}
                       >
                         <input type="file" hidden />
                         Incluir evidência
@@ -200,6 +206,7 @@ const TestCaseList: React.FC = () => {
             <TextField
               name="nome"
               label="Título"
+              value={name}
               onChange={(e) => setName(e.target.value)}
               fullWidth
               required
@@ -211,6 +218,7 @@ const TestCaseList: React.FC = () => {
             <TextField
               name="descricao"
               label="Descrição"
+              value={description}
               onChange={(e) => setDescription(e.target.value)}
               fullWidth
               multiline
@@ -224,6 +232,7 @@ const TestCaseList: React.FC = () => {
             <TextField
               name="passos"
               label="Passos"
+              value={steps}
               onChange={(e) => setSteps(e.target.value.split("\n"))}
               multiline
               rows={3}
@@ -249,8 +258,9 @@ const TestCaseList: React.FC = () => {
             <TextField
               name="resultadoEsperado"
               label="Resultado esperado"
-              fullWidth
+              value={expectedResult}
               onChange={(e) => setExpectedResult(e.target.value)}
+              fullWidth
               required
               error={!!error && !expectedResult.trim()}
               helperText={
