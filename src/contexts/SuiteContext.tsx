@@ -1,24 +1,31 @@
 import { createContext, useState } from "react";
 import type { SuiteDeTeste } from "../types";
-import { suitesDeTesteApi } from "../services/api";
+import { casosDeTesteApi, suitesDeTesteApi } from "../services/api";
 
 interface SuiteContextData {
   name: string;
   setName: React.Dispatch<React.SetStateAction<string>>;
-  version: string;
-  setVersion: React.Dispatch<React.SetStateAction<string>>;
+
   description: string;
   setDescription: React.Dispatch<React.SetStateAction<string>>;
+
+  version: string;
+  setVersion: React.Dispatch<React.SetStateAction<string>>;
+
   type: string;
   setType: React.Dispatch<React.SetStateAction<string>>;
+
   suitList: SuiteDeTeste[] | undefined;
   setSuitList: React.Dispatch<React.SetStateAction<SuiteDeTeste[] | undefined>>;
-  openModal: boolean;
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+
   editSuite: boolean;
   setEditSuite: React.Dispatch<React.SetStateAction<boolean>>;
+
   suiteId: string;
   setSuiteId: React.Dispatch<React.SetStateAction<string>>;
+
+  openModal: boolean;
+  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 
   error: string | null;
   setError: React.Dispatch<React.SetStateAction<string | null>>;
@@ -26,12 +33,12 @@ interface SuiteContextData {
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 
+  loadDataSuite: (id: string | undefined) => void;
+  handleCreateSuite: (id: string | undefined) => void;
+  handleUpdateSuite: () => void;
+  handleDeleteSuite: (id: string) => void;
   handleOpenModal: (called: boolean, suitId?: string) => void;
   handleClosedModal: () => void;
-  handleCreateSuite: (id: string | undefined) => void;
-  loadDataSuite: (id: string | undefined) => void;
-  handleDeleteSuite: (id: string) => void;
-  handleUpdateSuite: () => void;
 }
 
 interface SuiteProps {
@@ -121,6 +128,14 @@ export default function SuiteProvider({ children }: SuiteProps) {
   };
 
   const handleDeleteSuite = async (id: string) => {
+    const response = await casosDeTesteApi.listar();
+    const testCaseExists = response.data.some(
+      (testCase) => testCase.suite_id === id
+    );
+    if (testCaseExists) {
+      setError("Exclua seus casos de teste antes de excluir sua suíte.");
+      return;
+    }
     try {
       setLoading(true);
       await suitesDeTesteApi.excluir(id);
@@ -168,31 +183,31 @@ export default function SuiteProvider({ children }: SuiteProps) {
     <SuiteContext.Provider
       value={{
         name,
-        version,
         description,
+        version,
         type,
         suitList,
-        openModal,
         editSuite,
         suiteId,
+        openModal,
         error,
         loading,
         setLoading,
         setError,
         setSuiteId,
         setEditSuite,
-        setName,
-        setVersion,
-        setDescription,
-        setType,
         setSuitList,
+        setName,
+        setDescription,
+        setVersion,
+        setType,
         setOpenModal,
+        loadDataSuite,
         handleOpenModal,
         handleClosedModal,
         handleCreateSuite,
-        loadDataSuite,
-        handleDeleteSuite,
         handleUpdateSuite,
+        handleDeleteSuite,
       }}
     >
       {children}

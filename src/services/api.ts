@@ -5,7 +5,9 @@ import type {
   SuiteDeTeste,
   Bug,
   ExecucaoDeTeste,
+  Permission,
 } from "../types";
+import { storage } from "../storage";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
@@ -111,4 +113,9 @@ export const authApi = {
 // Dashboard
 export const dashboard = {
   resumo: () => api.get("dashboard/resumo"),
+};
+
+// permissions
+export const permissionsApi = {
+  create: (payload: Permission) => api.post("permissoes", payload),
 };

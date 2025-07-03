@@ -206,6 +206,14 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
   };
 
   const handleDelete = async (id: string) => {
+    const response = await execucoesApi.listar();
+    const executionsExist = response.data.some(
+      (execution) => execution.caso_id === id
+    );
+    if (executionsExist) {
+      setError("Exclua suas execuções antes de excluir o seu caso de teste.");
+      return;
+    }
     if (window.confirm("Tem certeza que deseja excluir este caso de teste?")) {
       try {
         setLoading(true);
@@ -262,11 +270,11 @@ export default function TestCaseProvider({ children }: TestCaseContextProps) {
       value={{
         name,
         description,
+        steps,
+        expectedResult,
         loading,
         error,
         openModal,
-        steps,
-        expectedResult,
         selectedTestCase,
         editTest,
         casosDeTeste,

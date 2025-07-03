@@ -82,3 +82,11 @@ export type User = {
   role: string;
   senha: string;
 };
+
+export type Permission = {
+  tipo: "leitura" | "escrita" | "execucao" | "admin";
+  usuario_id: string;
+  projeto_id?: string;
+  suite_id?: string;
+  caso_id?: string;
+};

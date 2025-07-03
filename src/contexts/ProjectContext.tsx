@@ -1,29 +1,38 @@
 import { createContext, useState } from "react";
 import type { Projeto } from "../types";
-import { projetosApi } from "../services/api";
+import { projetosApi, suitesDeTesteApi } from "../services/api";
+
 interface ProjectContextData {
   projetos: Projeto[];
   setProjetos: React.Dispatch<React.SetStateAction<Projeto[]>>;
-  loading: boolean;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  error: string | null;
-  setError: React.Dispatch<React.SetStateAction<string | null>>;
-  openModal: boolean;
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  creating: boolean;
-  setCreating: React.Dispatch<React.SetStateAction<boolean>>;
-  editingProjectId: string | null;
-  setEditingProjectId: React.Dispatch<React.SetStateAction<string | null>>;
+
   novoProjeto: any;
+  setNovoProjeto: React.Dispatch<React.SetStateAction<any>>;
+
   projectId: string | undefined;
   setProjectId: React.Dispatch<React.SetStateAction<string | undefined>>;
-  setNovoProjeto: React.Dispatch<React.SetStateAction<any>>;
-  handleOpenModal: (project?: Projeto) => void;
-  handleCloseModal: () => void;
+
+  editingProjectId: string | null;
+  setEditingProjectId: React.Dispatch<React.SetStateAction<string | null>>;
+
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+
+  error: string | null;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+
+  creating: boolean;
+  setCreating: React.Dispatch<React.SetStateAction<boolean>>;
+
+  openModal: boolean;
+  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+
+  loadProjetos: () => void;
   handleCreateProject: () => void;
   handleUpdateProject: () => void;
   handleDeleteProject: (id: string) => void;
-  loadProjetos: () => void;
+  handleOpenModal: (project?: Projeto) => void;
+  handleCloseModal: () => void;
 }
 
 interface ProjectProviderProps {
@@ -122,9 +131,10 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
         handleCloseModal();
         setError(null);
       }
-    } catch (err) {
-      setError("Erro ao criar projeto. Por favor, tente novamente.");
-      console.error("Erro ao criar projeto:", err);
+    } catch (error: any) {
+      if (error.response.status === 403) {
+        setError("Você não tem permissão para criar um projeto.");
+      }
     } finally {
       setCreating(false);
     }
@@ -154,18 +164,28 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
       }
     } catch (error) {
       setError("Erro ao editar projeto.");
-      console.log("Erro ao editar projeto:", error);
     }
   };
 
   const handleDeleteProject = async (id: string) => {
+    const response = await suitesDeTesteApi.listar();
+    const suiteExists = response.data.some((suite) => suite.projeto_id === id);
+
+    if (suiteExists) {
+      setError("Exclua suas suítes de teste antes de excluir seu projeto.");
+      return;
+    }
+
     try {
       const response = await projetosApi.excluir(id);
       setProjetos((prev) => prev.filter((project) => project.id !== id));
       console.log("Projeto excluido", response.data);
-    } catch (error) {
-      setError("Erro ao deletar projeto");
-      console.log("Erro ao excluir o projeto", error);
+    } catch (error: any) {
+      if (error.response.status === 403) {
+        setError("Você não tem permissão para excluir este projeto");
+      } else {
+        setError("Erro ao excluir projeto");
+      }
     }
   };
   return (
@@ -173,26 +193,26 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
       value={{
         projetos,
         novoProjeto,
+        editingProjectId,
+        projectId,
         loading,
         creating,
         error,
         openModal,
-        editingProjectId,
-        projectId,
         setProjectId,
-        setLoading,
-        setCreating,
         setEditingProjectId,
-        setError,
-        setOpenModal,
         setProjetos,
         setNovoProjeto,
+        setLoading,
+        setCreating,
+        setError,
+        setOpenModal,
+        loadProjetos,
+        handleCreateProject,
+        handleUpdateProject,
+        handleDeleteProject,
         handleOpenModal,
         handleCloseModal,
-        handleCreateProject,
-        handleDeleteProject,
-        handleUpdateProject,
-        loadProjetos,
       }}
     >
       {children}

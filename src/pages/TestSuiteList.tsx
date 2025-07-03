@@ -88,6 +88,7 @@ const TestSuiteList: React.FC = () => {
                 <TableCell>Descrição</TableCell>
                 <TableCell>Versão</TableCell>
                 <TableCell>Caso de teste</TableCell>
+                <TableCell>Tipo</TableCell>
                 <TableCell align="right">Ações</TableCell>
               </TableRow>
             </TableHead>
@@ -109,6 +110,7 @@ const TestSuiteList: React.FC = () => {
                         Ir para caso de teste
                       </a>
                     </TableCell>
+                    <TableCell>{suite.tipo}</TableCell>
                     <TableCell align="right">
                       <Button
                         size="small"
