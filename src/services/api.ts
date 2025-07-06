@@ -6,8 +6,8 @@ import type {
   Bug,
   ExecucaoDeTeste,
   Permission,
+  Report,
 } from "../types";
-import { storage } from "../storage";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
@@ -118,4 +118,13 @@ export const dashboard = {
 // permissions
 export const permissionsApi = {
   create: (payload: Permission) => api.post("permissoes", payload),
+};
+
+// Relatórios
+
+export const reports = {
+  listar: () => api.get<Report[]>("relatorios"),
+  create: (payload: any) => api.post("relatorios", payload),
+  update: (id: string, payload: any) => api.patch(`relatorios/${id}`, payload),
+  delete: (id: string) => api.delete(`relatorios/${id}`),
 };

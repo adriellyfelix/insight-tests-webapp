@@ -90,3 +90,16 @@ export type Permission = {
   suite_id?: string;
   caso_id?: string;
 };
+
+export type Report = {
+  id: string;
+  titulo: string;
+  descricao: string;
+  tipo: string;
+  projeto_id: string;
+  dados: string;
+};
+
+export type ReportEdit = {
+  type: "Criar" | "Editar";
+};

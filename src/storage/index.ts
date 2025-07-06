@@ -11,6 +11,9 @@ const storage = {
     const item = storage.get(key);
     return item ? JSON.parse(item) : null;
   },
+  remove: (key: string) => {
+    return localStorage.removeItem(key);
+  },
 
   clear: () => {
     return localStorage.clear();

@@ -177,9 +177,9 @@ export default function ProjectProvider({ children }: ProjectProviderProps) {
     }
 
     try {
-      const response = await projetosApi.excluir(id);
+      await projetosApi.excluir(id);
+      localStorage.removeItem("projectId");
       setProjetos((prev) => prev.filter((project) => project.id !== id));
-      console.log("Projeto excluido", response.data);
     } catch (error: any) {
       if (error.response.status === 403) {
         setError("Você não tem permissão para excluir este projeto");

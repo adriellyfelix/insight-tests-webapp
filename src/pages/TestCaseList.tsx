@@ -24,7 +24,6 @@ import { Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material";
 import { useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import useCaseTest from "../hooks/useCaseTest";
-import { storage } from "../storage";
 const TestCaseList: React.FC = () => {
   const {
     openModal,
@@ -39,8 +38,6 @@ const TestCaseList: React.FC = () => {
     name,
     description,
     steps,
-    file,
-    setFile,
     setName,
     setDescription,
     setSteps,
